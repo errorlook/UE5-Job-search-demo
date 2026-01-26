@@ -35,3 +35,8 @@ Thumbs.db
 
 # 如果你的团队里以后有人用 Mac，留着这个没坏处
 .DS_Store
+
+# 忽略巨大的市场资产包
+Content/ParagonGrux/
+Content/ParagonShinbi/
+Content/Paragon*/
