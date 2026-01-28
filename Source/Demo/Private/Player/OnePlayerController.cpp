@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// OnePlayerController.cpp
 
 #include "Player/OnePlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "InputMappingContext.h" 
 
 AOnePlayerController::AOnePlayerController()
 {
@@ -12,59 +12,69 @@ AOnePlayerController::AOnePlayerController()
 
 void AOnePlayerController::ToggleMouseCursor()
 {
-	// 1. 切换状态开关 (取反)
-	bIsMouseVisible = !bIsMouseVisible;
+	// 1. 直接使用父类的 bShowMouseCursor 取反
+	// 如果当前是 true，就变成 false；如果是 false，就变成 true
+	bShowMouseCursor = !bShowMouseCursor;
 
-	// 2. 将控制器的鼠标显示属性设置为当前状态
-	bShowMouseCursor = bIsMouseVisible;
-
-	// 3. 根据状态应用不同的输入模式
-	if (bIsMouseVisible)
+	// 2. 根据状态应用不同的输入模式
+	if (bShowMouseCursor)
 	{
-		// === 情况一：鼠标显示出来了 (Alt 模式) ===
-		// 我们需要允许鼠标点击 UI，同时不锁定鼠标在屏幕中心
-
+		// === 鼠标显示模式 (Alt 呼出) ===
 		FInputModeGameAndUI InputMode;
 		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		// 【可选优化】这行代码能让鼠标点击瞬间不隐藏，防止闪烁，但不是必须的
+		InputMode.SetHideCursorDuringCapture(false);
 		SetInputMode(InputMode);
 	}
 	else
 	{
-		// === 情况二：鼠标隐藏了 (回到游戏) ===
-	
+		// === 游戏模式 (鼠标消失) ===
 		FInputModeGameOnly InputMode;
 		SetInputMode(InputMode);
 	}
 }
 
+// 【新增】点击屏幕时的逻辑
+void AOnePlayerController::OnClickScreen()
+{
+	// 只有当鼠标当前是【显示】的时候，点击屏幕才需要把它【隐藏】
+	// 如果鼠标本来就是隐藏的（你在正常玩游戏开枪），不要执行这个，否则会干扰正常操作
+	if (bShowMouseCursor)
+	{
+		ToggleMouseCursor(); // 调用切换函数，把它关掉
+	}
+}
+
 void AOnePlayerController::SetupInputComponent()
 {
-	Super::SetupInputComponent(); // 别忘了调用父类方法，这是好习惯
+	Super::SetupInputComponent();
 
-	// 1. 先把输入组件转换成增强版
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		// 2. 进行绑定
-		// 参数依次是：动作资产，触发时机，执行者，执行函数
+		// 绑定 Alt 键
 		EnhancedInputComponent->BindAction(AltAction, ETriggerEvent::Started, this, &AOnePlayerController::ToggleMouseCursor);
+
+		// 【新增】绑定 鼠标左键 (注意这里检查一下指针是否为空，防止编辑器没设置崩溃)
+		if (ClickAction)
+		{
+			EnhancedInputComponent->BindAction(ClickAction, ETriggerEvent::Started, this, &AOnePlayerController::OnClickScreen);
+		}
 	}
 }
 
 void AOnePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	//检查输入系统
-	check(PlayerContext);
 
-	//获得增强输入子系统
-	if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+	// 安全检查
+	if (PlayerContext)
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
+		if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 		{
-			//添加输入映射上下文，优先级为0
-			Subsystem->AddMappingContext(PlayerContext, 0);
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
+			{
+				Subsystem->AddMappingContext(PlayerContext, 0);
+			}
 		}
 	}
-
-
 }

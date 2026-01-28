@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// OnePlayerController.h
 
 #pragma once
 
@@ -13,31 +13,32 @@ UCLASS()
 class DEMO_API AOnePlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
 
 public:
 	AOnePlayerController();
-	//绑定到ALT的函数
+
+	// 绑定到 ALT 的函数 (切换显示/隐藏)
 	void ToggleMouseCursor();
-	// 重写绑定输入功能的函数
+
+	// 【新增】绑定到 鼠标左键 的函数 (点击屏幕返回游戏)
+	void OnClickScreen();
+
 	virtual void SetupInputComponent() override;
 
 protected:
-	//重写开始游戏函数
 	virtual void BeginPlay() override;
-	// 记录鼠标显示状态的开关
-	bool bIsMouseVisible;
 
-
+	// 【优化】删除了 bIsMouseVisible，因为父类有 bShowMouseCursor 可以直接用
 
 private:
-	//增强输入组件
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<UInputMappingContext>PlayerContext;
+	TObjectPtr<UInputMappingContext> PlayerContext;
 
-	//鼠标
+	// Alt 键动作
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<UInputAction>AltAction;
+	TObjectPtr<UInputAction> AltAction;
 
-	//
+	// 【新增】鼠标左键动作
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ClickAction;
 };
