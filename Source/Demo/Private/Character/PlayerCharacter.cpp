@@ -62,6 +62,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
         // 绑定 缩放
         if (ZoomAction)
             EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Zoom);
+        // 绑定奔跑
+        if (SprintAction)
+        {
+            // 按下时加速
+            EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::SprintStart);
+
+            // 松开时减速
+            EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::SprintStop);
+        }
 
         // 绑定 跳跃 (直接绑定父类 ACharacter 的函数)
         if (JumpAction)
@@ -127,5 +136,25 @@ void APlayerCharacter::Zoom(const FInputActionValue& Value)
 
         // 限制在这个范围内 (Clamp)
         CameraBoom->TargetArmLength = FMath::Clamp(NewDistance, MinDistance, MaxDistance);
+    }
+}
+
+void APlayerCharacter::SprintStart()
+{
+    // 获取移动组件并修改最大行走速度
+    // 注意：GetCharacterMovement() 是 ACharacter 自带的方法
+    if (GetCharacterMovement())
+    {
+        GetCharacterMovement()->MaxWalkSpeed = 1000.f; // 设置为奔跑速度
+    }
+
+}
+
+void APlayerCharacter::SprintStop()
+{
+    // 恢复为默认走路速度
+    if (GetCharacterMovement())
+    {
+        GetCharacterMovement()->MaxWalkSpeed = 400.f; // 恢复默认速度
     }
 }
