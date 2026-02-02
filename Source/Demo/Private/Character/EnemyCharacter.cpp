@@ -2,7 +2,21 @@
 
 
 #include "Character/EnemyCharacter.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
+#include "AbilitySystem/PlayerAbilitySystemComponent.h"
 #include "Components/PrimitiveComponent.h"
+
+
+
+AEnemyCharacter::AEnemyCharacter()
+{
+	//创建能力系统组件
+	AbilitySystemComponent = CreateDefaultSubobject<UPlayerAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+
+    //构建属性集
+	AttributeSet = CreateDefaultSubobject<UPlayerAttributeSet>(TEXT("AttributeSet"));
+}
 
 //高亮接口实现
 void AEnemyCharacter::ToggleHighlight_Implementation(bool bActive)

@@ -14,6 +14,8 @@ class DEMO_API AEnemyCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 	
-	void ToggleHighlight_Implementation(bool bActive);
 
+public:
+	AEnemyCharacter();
+	void ToggleHighlight_Implementation(bool bActive);
 };
