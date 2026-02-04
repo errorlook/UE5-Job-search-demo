@@ -13,6 +13,8 @@ AEnemyCharacter::AEnemyCharacter()
 	//创建能力系统组件
 	AbilitySystemComponent = CreateDefaultSubobject<UPlayerAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
+    AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
 
     //构建属性集
 	AttributeSet = CreateDefaultSubobject<UPlayerAttributeSet>(TEXT("AttributeSet"));
@@ -44,4 +46,11 @@ void AEnemyCharacter::ToggleHighlight_Implementation(bool bActive)
             }
         }
 	}
+}
+
+void AEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }

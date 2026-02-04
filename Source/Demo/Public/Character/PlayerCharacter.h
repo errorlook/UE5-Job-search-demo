@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Character/CharacterBase.h"
-#include "InputActionValue.h" // <--- 【新增1】必须加这个，不然 Move 函数里的参数会报错
+#include "InputActionValue.h" 
+#include "AbilitySystemInterface.h"
 #include "PlayerCharacter.generated.h"
 
-// 前置声明组件类，避免引用太多头文件
+
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
@@ -18,7 +19,14 @@ class DEMO_API APlayerCharacter : public ACharacterBase
 	GENERATED_BODY()
 
 public:
-	APlayerCharacter(); // <--- 【建议】加上构造函数，用来初始化摄像机
+	APlayerCharacter(); 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_Controller() override;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+private:
+	void InitAbilityActorInfo();
+
 
 protected:
 	virtual void BeginPlay() override;
