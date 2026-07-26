@@ -9,6 +9,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, StatValue);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedNativeSignature, int32);
 class UAbilitySystemComponent;
 class UAttributeSet;
 
@@ -46,6 +47,8 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnPlayerStatChangedSignature OnPlayerLevelChanged;
+
+	FOnPlayerStatChangedNativeSignature OnPlayerLevelChangedNative;
 	
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues();
@@ -62,4 +65,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	void PlayerLevelChangedCallback(int32 NewLevel);
 };

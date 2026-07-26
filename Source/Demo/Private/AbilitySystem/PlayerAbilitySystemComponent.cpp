@@ -5,6 +5,7 @@
 
 #include "PlayerGameplayTags.h"
 #include "AbilitySystem/Abilities/PlayerGameplayAbility.h"
+#include "Player/OPlayerState.h"
 
 void UPlayerAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -21,12 +22,15 @@ void UPlayerAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclass
 	{
 		if (!AbilityClass || FindAbilitySpecFromClass(AbilityClass)) continue;
 
-		 FGameplayAbilitySpec AbilitySpec =  FGameplayAbilitySpec(AbilityClass,1);
-		 if (const UPlayerGameplayAbility* PlayerAbility = Cast<UPlayerGameplayAbility>(AbilitySpec.Ability))
-		 {
-		 	AbilitySpec.GetDynamicSpecSourceTags().AddTag(PlayerAbility->StartupInputTag);
-		 }
-		 GiveAbility(AbilitySpec);
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(
+			AbilityClass, GetAuthoritativeAbilityLevel());
+		if (const UPlayerGameplayAbility* PlayerAbility =
+			Cast<UPlayerGameplayAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.GetDynamicSpecSourceTags().AddTag(
+				PlayerAbility->StartupInputTag);
+		}
+		GiveAbility(AbilitySpec);
 	}
 }
 
@@ -45,7 +49,8 @@ void UPlayerAbilitySystemComponent::SetCharacterAbilities(
 	{
 		if (!AbilityClass) continue;
 
-		FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+		FGameplayAbilitySpec AbilitySpec(
+			AbilityClass, GetAuthoritativeAbilityLevel());
 		if (const UPlayerGameplayAbility* PlayerAbility =
 			Cast<UPlayerGameplayAbility>(AbilitySpec.Ability))
 		{
@@ -55,6 +60,34 @@ void UPlayerAbilitySystemComponent::SetCharacterAbilities(
 
 		CharacterAbilityHandles.Add(GiveAbility(AbilitySpec));
 	}
+}
+
+void UPlayerAbilitySystemComponent::SetAuthoritativeAbilityLevel(int32 NewLevel)
+{
+	if (!IsOwnerActorAuthoritative() || NewLevel < 1)
+	{
+		return;
+	}
+
+	for (const FGameplayAbilitySpecHandle Handle : CharacterAbilityHandles)
+	{
+		FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(Handle);
+		if (AbilitySpec && AbilitySpec->Level != NewLevel)
+		{
+			AbilitySpec->Level = NewLevel;
+			MarkAbilitySpecDirty(*AbilitySpec);
+		}
+	}
+}
+
+int32 UPlayerAbilitySystemComponent::GetAuthoritativeAbilityLevel() const
+{
+	if (const AOPlayerState* PlayerState = Cast<AOPlayerState>(GetOwnerActor()))
+	{
+		return PlayerState->GetPlayerLevel();
+	}
+
+	return 1;
 }
 
 void UPlayerAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)

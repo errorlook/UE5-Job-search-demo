@@ -35,6 +35,32 @@ void AOPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& 
 
 void AOPlayerState::OnRep_Level(int32 OldLevel)
 {
+	(void)OldLevel;
+	BroadcastLevelChanged();
+}
+
+bool AOPlayerState::SetPlayerLevel(int32 NewLevel)
+{
+	if (!HasAuthority() || NewLevel < 1 || NewLevel == Level)
+	{
+		return false;
+	}
+
+	Level = NewLevel;
+	if (UPlayerAbilitySystemComponent* PlayerASC =
+		Cast<UPlayerAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		PlayerASC->SetAuthoritativeAbilityLevel(Level);
+	}
+	ForceNetUpdate();
+	BroadcastLevelChanged();
+	return true;
+}
+
+void AOPlayerState::BroadcastLevelChanged()
+{
+	OnLevelChanged.Broadcast(Level);
+	OnLevelChangedNative.Broadcast(Level);
 }
 
 UAbilitySystemComponent* AOPlayerState::GetAbilitySystemComponent() const

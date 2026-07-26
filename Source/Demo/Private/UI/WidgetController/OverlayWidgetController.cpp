@@ -79,10 +79,13 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
     {
         if (OPlayerState->ExpComponent)
         {
-            // Adapt component delegates to widget-controller delegates.
+            // Experience remains owned by the component.
             OPlayerState->ExpComponent->OnExperienceChanged.AddDynamic(this, &UOverlayWidgetController::XPChangedCallback);
-            OPlayerState->ExpComponent->OnLeveledUp.AddDynamic(this, &UOverlayWidgetController::LevelUpCallback);
         }
+
+        // Level is replicated and broadcast by PlayerState on every network role.
+        OPlayerState->OnLevelChanged.AddUniqueDynamic(
+            this, &UOverlayWidgetController::LevelUpCallback);
 
         if (UPartyComponent* PartyComponent = OPlayerState->GetPartyComponent())
         {

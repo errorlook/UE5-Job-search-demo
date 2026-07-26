@@ -29,6 +29,9 @@ public:
 	void SetCharacterAbilities(
 		const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
+	/** Keeps granted ability specs aligned with the authoritative PlayerState level. */
+	void SetAuthoritativeAbilityLevel(int32 NewLevel);
+
 	UFUNCTION(BlueprintCallable, Category = "Ability|Input")
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 
@@ -43,4 +46,6 @@ protected:
 
 	UPROPERTY(Transient)
 	TArray<FGameplayAbilitySpecHandle> CharacterAbilityHandles;
+
+	int32 GetAuthoritativeAbilityLevel() const;
 };

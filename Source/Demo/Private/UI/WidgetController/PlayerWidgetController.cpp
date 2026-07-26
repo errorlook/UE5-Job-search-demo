@@ -20,11 +20,23 @@ void UPlayerWidgetController::BroadcastInitialValues()
 		const int32 CurrentLevel = OPlayerState->GetPlayerLevel();
 		// Broadcast the current level to all dependent widgets.
 		OnPlayerLevelChanged.Broadcast(CurrentLevel);
+		OnPlayerLevelChangedNative.Broadcast(CurrentLevel);
 	}
 
 }
 
 void UPlayerWidgetController::BindCallbacksToDependencies()
 {
-	
+	if (AOPlayerState* OPlayerState = Cast<AOPlayerState>(PlayerState))
+	{
+		OPlayerState->OnLevelChangedNative.RemoveAll(this);
+		OPlayerState->OnLevelChangedNative.AddUObject(
+			this, &UPlayerWidgetController::PlayerLevelChangedCallback);
+	}
+}
+
+void UPlayerWidgetController::PlayerLevelChangedCallback(int32 NewLevel)
+{
+	OnPlayerLevelChanged.Broadcast(NewLevel);
+	OnPlayerLevelChangedNative.Broadcast(NewLevel);
 }
