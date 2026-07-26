@@ -1,0 +1,383 @@
+{
+	"schemaVersion": 2,
+	"assetPath": "/Game/_Game/BluePrints/UI/Overlay/WBP_HeroCard",
+	"designResolution":
+	{
+		"width": 1920,
+		"height": 1080
+	},
+	"widgets": [
+		{
+			"widgetPath": "CardRoot",
+			"widgetName": "CardRoot",
+			"expectedClass": "SizeBox",
+			"parentPath": "",
+			"slotClass": "None",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"sizeBox"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "Visible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"sizeBox":
+				{
+					"widthOverride": 150,
+					"heightOverride": 180,
+					"minDesiredWidth": 150,
+					"minDesiredHeight": 180,
+					"maxDesiredWidth": 150,
+					"maxDesiredHeight": 180
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay",
+			"widgetName": "CardOverlay",
+			"expectedClass": "Overlay",
+			"parentPath": "CardRoot",
+			"slotClass": "SizeBoxSlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": ""
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/CardSurface",
+			"widgetName": "CardSurface",
+			"expectedClass": "Border",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0.035,
+						"g": 0.039,
+						"b": 0.035,
+						"a": 0.95
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 0,
+						"top": 0,
+						"right": 0,
+						"bottom": 0
+					},
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/HeroAvatarImage",
+			"widgetName": "HeroAvatarImage",
+			"expectedClass": "Image",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"image"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"image":
+				{
+					"colorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					}
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/BottomNameShade",
+			"widgetName": "BottomNameShade",
+			"expectedClass": "Image",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"image"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"image":
+				{
+					"colorAndOpacity":
+					{
+						"r": 0.02,
+						"g": 0.024,
+						"b": 0.02,
+						"a": 0.91
+					}
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/HeroButton",
+			"widgetName": "HeroButton",
+			"expectedClass": "Button",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"button"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Visible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"button":
+				{
+					"backgroundColor":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"colorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"isFocusable": false
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/PartyStateBadge",
+			"widgetName": "PartyStateBadge",
+			"expectedClass": "Border",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Collapsed",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0.925,
+						"g": 0.906,
+						"b": 0.851,
+						"a": 1
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 0.09,
+						"g": 0.094,
+						"b": 0.075,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 6,
+						"top": 3,
+						"right": 6,
+						"bottom": 3
+					},
+					"horizontalAlignment": "Center",
+					"verticalAlignment": "Center"
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/PartyStateText",
+			"widgetName": "PartyStateText",
+			"expectedClass": "RichTextBlock",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"richTextStyle"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"richTextStyle":
+				{
+					"overrideDefaultStyle": true
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/HeroNameText",
+			"widgetName": "HeroNameText",
+			"expectedClass": "RichTextBlock",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"richTextStyle"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"richTextStyle":
+				{
+					"overrideDefaultStyle": true
+				}
+			}
+		},
+		{
+			"widgetPath": "CardRoot/CardOverlay/HoverFrame",
+			"widgetName": "HoverFrame",
+			"expectedClass": "Border",
+			"parentPath": "CardRoot/CardOverlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Collapsed",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 0,
+						"top": 0,
+						"right": 0,
+						"bottom": 0
+					},
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				}
+			}
+		}
+	]
+}

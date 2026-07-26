@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "assetPath": "/Game/_Game/BluePrints/UI/PlayerMenu/WBP_CharacterSelect",
+  "widgets": [
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer",
+      "widgetName": "BackgroundLayer",
+      "expectedClass": "CanvasPanel",
+      "visibility": "SelfHitTestInvisible"
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/BackgroundImage",
+      "widgetName": "BackgroundImage",
+      "expectedClass": "Image",
+      "visibility": "SelfHitTestInvisible"
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/BaseTint",
+      "widgetName": "BaseTint",
+      "expectedClass": "Border",
+      "visibility": "SelfHitTestInvisible"
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/LeftShade",
+      "widgetName": "LeftShade",
+      "expectedClass": "Border",
+      "visibility": "SelfHitTestInvisible"
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/GeometryDecoration",
+      "widgetName": "GeometryDecoration",
+      "expectedClass": "CanvasPanel",
+      "visibility": "SelfHitTestInvisible"
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/HeaderArea",
+      "widgetName": "HeaderArea",
+      "expectedClass": "HorizontalBox",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/HeaderArea/TitleGroup",
+      "widgetName": "TitleGroup",
+      "expectedClass": "VerticalBox",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/HeaderArea/TitleGroup/PageTitle",
+      "widgetName": "PageTitle",
+      "expectedClass": "RichTextBlock",
+      "richTextStyle": {
+        "overrideDefaultStyle": true,
+        "fontObjectPath": "/Engine/EngineFonts/Roboto.Roboto",
+        "typefaceFontName": "Regular"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/HeaderArea/HeaderSpacer",
+      "widgetName": "HeaderSpacer",
+      "expectedClass": "Spacer",
+      "boxSlot": {
+        "sizeRule": "Fill",
+        "fillCoefficient": 1.0
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/HeaderArea/close",
+      "widgetName": "close",
+      "expectedClass": "Button",
+      "isVariable": true,
+      "boxSlot": {
+        "sizeRule": "Auto",
+        "horizontalAlignment": "Center",
+        "verticalAlignment": "Center"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent",
+      "widgetName": "MainContent",
+      "expectedClass": "HorizontalBox",
+      "boxSlot": {
+        "sizeRule": "Fill",
+        "fillCoefficient": 1.0
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/RosterPanel",
+      "widgetName": "RosterPanel",
+      "expectedClass": "VerticalBox",
+      "boxSlot": {
+        "sizeRule": "Fill",
+        "fillCoefficient": 0.32
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/RosterPanel/RosterHeader",
+      "widgetName": "RosterHeader",
+      "expectedClass": "RichTextBlock",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      },
+      "richTextStyle": {
+        "overrideDefaultStyle": true,
+        "fontObjectPath": "/Engine/EngineFonts/Roboto.Roboto",
+        "typefaceFontName": "Regular"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/RosterPanel/RosterDivider",
+      "widgetName": "RosterDivider",
+      "expectedClass": "Border",
+      "visibility": "SelfHitTestInvisible",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/RosterPanel/RosterScrollBox",
+      "widgetName": "RosterScrollBox",
+      "expectedClass": "ScrollBox",
+      "boxSlot": {
+        "sizeRule": "Fill",
+        "fillCoefficient": 1.0
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/RosterPanel/RosterScrollBox/RosterBox",
+      "widgetName": "RosterBox",
+      "expectedClass": "WrapBox",
+      "isVariable": true
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/CenterDivider",
+      "widgetName": "CenterDivider",
+      "expectedClass": "Border",
+      "visibility": "SelfHitTestInvisible",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/PartyPanel",
+      "widgetName": "PartyPanel",
+      "expectedClass": "VerticalBox",
+      "boxSlot": {
+        "sizeRule": "Fill",
+        "fillCoefficient": 0.68
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/PartyPanel/ActivePartyTitleText",
+      "widgetName": "ActivePartyTitleText",
+      "expectedClass": "RichTextBlock",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      },
+      "richTextStyle": {
+        "overrideDefaultStyle": true,
+        "fontObjectPath": "/Engine/EngineFonts/Roboto.Roboto",
+        "typefaceFontName": "Regular"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/PartyPanel/PartySubtitle",
+      "widgetName": "PartySubtitle",
+      "expectedClass": "TextBlock",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/PartyPanel/ActivePartyBox",
+      "widgetName": "ActivePartyBox",
+      "expectedClass": "VerticalBox",
+      "isVariable": true,
+      "boxSlot": {
+        "sizeRule": "Fill",
+        "fillCoefficient": 1.0
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/PartyPanel/OperationHint",
+      "widgetName": "OperationHint",
+      "expectedClass": "TextBlock",
+      "boxSlot": {
+        "sizeRule": "Auto"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BottomActionBar/CancelSizeBox/CancelButton",
+      "widgetName": "CancelButton",
+      "expectedClass": "Button",
+      "isVariable": true
+    },
+    {
+      "widgetPath": "RootCanvas/BottomActionBar/ConfirmSizeBox/ConfirmButton",
+      "widgetName": "ConfirmButton",
+      "expectedClass": "Button",
+      "isVariable": true
+    }
+  ]
+}

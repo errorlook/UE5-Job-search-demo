@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 2,
+  "assetPath": "/Game/_Game/BluePrints/UI/Overlay/WBP_PartySetupSlot",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "SlotRoot",
+      "expectedClass": "SizeBox",
+      "expectedCurrent": {
+        "sizeBox": {
+          "widthOverride": 230,
+          "heightOverride": 620,
+          "minDesiredWidth": null,
+          "minDesiredHeight": null,
+          "maxDesiredWidth": null,
+          "maxDesiredHeight": null
+        }
+      },
+      "set": {
+        "visibility": "Visible",
+        "sizeBox": {
+          "widthOverride": 230,
+          "heightOverride": 620,
+          "minDesiredWidth": 220,
+          "minDesiredHeight": 600,
+          "maxDesiredWidth": 250,
+          "maxDesiredHeight": 640
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotBackground",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "isVariable": true,
+        "border": {
+          "brushColor": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "visibility": "SelfHitTestInvisible",
+        "border": {
+          "brushColor": { "r": 0.035, "g": 0.039, "b": 0.035, "a": 0.95 },
+          "contentColorAndOpacity": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "padding": { "left": 0, "top": 0, "right": 0, "bottom": 0 }
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/CardSurface",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "visibility": "Visible",
+        "border": {
+          "brushColor": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "border": {
+          "brushColor": { "r": 0.09, "g": 0.09, "b": 0.075, "a": 0.32 },
+          "padding": { "left": 0, "top": 0, "right": 0, "bottom": 0 }
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotNumberText",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "isVariable": false,
+        "textBlock": {
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "textBlock": {
+          "fontSize": 58,
+          "colorAndOpacity": { "r": 0.824, "g": 0.765, "b": 0.561, "a": 0.18 },
+          "shadowColor": { "r": 0, "g": 0, "b": 0, "a": 0 },
+          "autoWrapText": false,
+          "justification": "Left",
+          "minDesiredWidth": 84
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/FullBodyImage",
+      "expectedClass": "Image",
+      "expectedCurrent": {
+        "isVariable": true,
+        "image": {
+          "colorAndOpacity": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "image": {
+          "colorAndOpacity": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/BottomInfoShade",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "visibility": "Visible",
+        "border": {
+          "brushColor": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "border": {
+          "brushColor": { "r": 0.02, "g": 0.024, "b": 0.02, "a": 0.91 },
+          "padding": { "left": 0, "top": 0, "right": 0, "bottom": 0 }
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/ElementIconImage",
+      "expectedClass": "Image",
+      "expectedCurrent": {
+        "isVariable": true,
+        "image": {
+          "colorAndOpacity": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "image": {
+          "colorAndOpacity": { "r": 0.925, "g": 0.906, "b": 0.851, "a": 0.9 }
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/ActiveBadge",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "isVariable": false,
+        "visibility": "Visible",
+        "border": {
+          "brushColor": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "visibility": "Collapsed",
+        "border": {
+          "brushColor": { "r": 0.925, "g": 0.906, "b": 0.851, "a": 1 },
+          "contentColorAndOpacity": { "r": 0.09, "g": 0.094, "b": 0.075, "a": 1 },
+          "padding": { "left": 8, "top": 4, "right": 8, "bottom": 4 },
+          "horizontalAlignment": "Center",
+          "verticalAlignment": "Center"
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/ActiveBadge/ActiveBadgeText",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "isVariable": false,
+        "textBlock": {
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "textBlock": {
+          "fontSize": 12,
+          "colorAndOpacity": { "r": 0.09, "g": 0.094, "b": 0.075, "a": 1 },
+          "justification": "Center",
+          "minDesiredWidth": 58
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotButton",
+      "expectedClass": "Button",
+      "expectedCurrent": {
+        "isVariable": true,
+        "button": {
+          "isFocusable": true
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "visibility": "Visible",
+        "button": {
+          "backgroundColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "colorAndOpacity": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "isFocusable": false
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/SelectedFrame",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "isVariable": true,
+        "visibility": "SelfHitTestInvisible",
+        "border": {
+          "brushColor": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "visibility": "Collapsed",
+        "border": {
+          "brushColor": { "r": 0, "g": 0, "b": 0, "a": 0 },
+          "padding": { "left": 0, "top": 0, "right": 0, "bottom": 0 }
+        }
+      }
+    }
+  ]
+}

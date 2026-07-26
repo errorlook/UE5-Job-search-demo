@@ -7,6 +7,7 @@
 #include "Components/RichTextBlock.h"
 #include "Components/TextBlock.h"
 #include "Blueprint/WidgetTree.h"
+#include "AbilitySystemComponent.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Character/EnemyCharacter.h"
@@ -134,18 +135,20 @@ void UPlayerUserWidget::RebuildPartyHud()
 		WidgetTree->FindWidget(TEXT("Slots")));
 	if (!SlotsPanel) return;
 
-	TSubclassOf<UUserWidget> PartySlotClass;
-	for (int32 ChildIndex = 0;
-		ChildIndex < SlotsPanel->GetChildrenCount(); ++ChildIndex)
+	if (!CachedPartySlotClass)
 	{
-		if (UUserWidget* TemplateSlot = Cast<UUserWidget>(
-			SlotsPanel->GetChildAt(ChildIndex)))
+		for (int32 ChildIndex = 0;
+			ChildIndex < SlotsPanel->GetChildrenCount(); ++ChildIndex)
 		{
-			PartySlotClass = TemplateSlot->GetClass();
-			break;
+			if (UUserWidget* TemplateSlot = Cast<UUserWidget>(
+				SlotsPanel->GetChildAt(ChildIndex)))
+			{
+				CachedPartySlotClass = TemplateSlot->GetClass();
+				break;
+			}
 		}
 	}
-	if (!PartySlotClass) return;
+	if (!CachedPartySlotClass) return;
 
 	SlotsPanel->ClearChildren();
 	const TArray<FHeroSlotInfo> ActiveHeroes =
@@ -154,7 +157,7 @@ void UPlayerUserWidget::RebuildPartyHud()
 	{
 		const FHeroSlotInfo& HeroInfo = ActiveHeroes[Index];
 		UUserWidget* PartySlot = CreateWidget<UUserWidget>(
-			GetOwningPlayer(), PartySlotClass);
+			GetOwningPlayer(), CachedPartySlotClass);
 		if (!PartySlot) continue;
 
 		if (PartySlot->WidgetTree)
@@ -163,7 +166,7 @@ void UPlayerUserWidget::RebuildPartyHud()
 				PartySlot->WidgetTree->FindWidget(TEXT("Img_Avatar"))))
 			{
 				AvatarImage->SetBrushFromTexture(
-					const_cast<UTexture2D*>(HeroInfo.AvatarIcon.Get()), true);
+					const_cast<UTexture2D*>(HeroInfo.AvatarIcon.Get()), false);
 			}
 			if (UTextBlock* HotkeyText = Cast<UTextBlock>(
 				PartySlot->WidgetTree->FindWidget(TEXT("Text_Hotkey"))))
@@ -181,8 +184,13 @@ void UPlayerUserWidget::RefreshSkillHud()
 {
 	if (!WidgetTree) return;
 
-	const APlayerCharacter* PlayerCharacter =
-		Cast<APlayerCharacter>(GetOwningPlayerPawn());
+	const AOPlayerState* OPlayerState =
+		GetOwningPlayerState<AOPlayerState>();
+	const UAbilitySystemComponent* AbilitySystemComponent =
+		OPlayerState ? OPlayerState->GetAbilitySystemComponent() : nullptr;
+	const APlayerCharacter* PlayerCharacter = AbilitySystemComponent
+		? Cast<APlayerCharacter>(AbilitySystemComponent->GetAvatarActor())
+		: nullptr;
 	const UOverlayWidgetController* OverlayController =
 		BoundOverlayController.Get();
 	if (!PlayerCharacter || !OverlayController) return;

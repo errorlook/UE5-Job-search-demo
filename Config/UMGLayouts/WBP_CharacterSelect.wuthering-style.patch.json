@@ -1,0 +1,659 @@
+{
+  "schemaVersion": 2,
+  "assetPath": "/Game/_Game/BluePrints/UI/PlayerMenu/WBP_CharacterSelect",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "RootCanvas",
+      "expectedClass": "CanvasPanel",
+      "expectedCurrent": {
+        "visibility": "SelfHitTestInvisible"
+      },
+      "set": {
+        "visibility": "Visible",
+        "isEnabled": true
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/BackgroundImage",
+      "expectedClass": "Image",
+      "expectedCurrent": {
+        "image": {
+          "colorAndOpacity": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "image": {
+          "colorAndOpacity": { "r": 0.48, "g": 0.46, "b": 0.39, "a": 0.72 }
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/BaseTint",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "border": {
+          "brushColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "padding": { "left": 4, "top": 2, "right": 4, "bottom": 2 }
+        }
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "border": {
+          "brushColor": { "r": 0.031, "g": 0.039, "b": 0.035, "a": 0.85 },
+          "padding": { "left": 0, "top": 0, "right": 0, "bottom": 0 },
+          "horizontalAlignment": "Fill",
+          "verticalAlignment": "Fill"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/LeftShade",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "canvasSlot": {
+          "size": { "x": 620, "y": 1080 },
+          "zOrder": 2
+        },
+        "border": {
+          "brushColor": { "r": 1, "g": 1, "b": 1, "a": 1 }
+        }
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 360, "y": 1080 },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 2
+        },
+        "border": {
+          "brushColor": { "r": 0.043, "g": 0.047, "b": 0.039, "a": 0.76 }
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/GeometryDecoration",
+      "expectedClass": "CanvasPanel",
+      "expectedCurrent": {
+        "renderOpacity": 1
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "renderOpacity": 0.1
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher",
+      "expectedClass": "WidgetSwitcher",
+      "expectedCurrent": {
+        "isVariable": false,
+        "visibility": "SelfHitTestInvisible",
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 100, "y": 30 },
+          "zOrder": 0
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "visibility": "Visible",
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 1920, "y": 1080 },
+          "anchors": {
+            "minimum": { "x": 0, "y": 0 },
+            "maximum": { "x": 0, "y": 0 }
+          },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 10
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent",
+      "expectedClass": "VerticalBox",
+      "expectedCurrent": {
+        "canvasSlot": {
+          "position": { "x": 48, "y": 36 },
+          "size": { "x": 1824, "y": 932 }
+        }
+      },
+      "set": {
+        "visibility": "Visible",
+        "canvasSlot": {
+          "position": { "x": 64, "y": 36 },
+          "size": { "x": 1792, "y": 914 },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 10
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/HeaderArea",
+      "expectedClass": "HorizontalBox",
+      "expectedCurrent": {
+        "boxSlot": {
+          "verticalAlignment": "Fill"
+        }
+      },
+      "set": {
+        "boxSlot": {
+          "sizeRule": "Auto",
+          "horizontalAlignment": "Fill",
+          "verticalAlignment": "Center"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/HeaderArea/TitleGroup",
+      "expectedClass": "VerticalBox",
+      "expectedCurrent": {
+        "boxSlot": {
+          "horizontalAlignment": "Fill",
+          "verticalAlignment": "Fill"
+        }
+      },
+      "set": {
+        "boxSlot": {
+          "sizeRule": "Auto",
+          "horizontalAlignment": "Left",
+          "verticalAlignment": "Center"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/HeaderArea/TitleGroup/PageSubtitle",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "选择出战成员并调整队伍顺序",
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "textBlock": {
+          "text": "调整当前编队成员",
+          "fontSize": 16,
+          "colorAndOpacity": { "r": 0.725, "g": 0.714, "b": 0.667, "a": 1 },
+          "shadowColor": { "r": 0, "g": 0, "b": 0, "a": 0.55 },
+          "shadowOffset": { "x": 0, "y": 1 },
+          "autoWrapText": false,
+          "justification": "Left"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/HeaderArea/close",
+      "expectedClass": "Button",
+      "expectedCurrent": {
+        "isVariable": true,
+        "button": {
+          "isFocusable": true
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "isEnabled": true,
+        "button": {
+          "backgroundColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "colorAndOpacity": { "r": 0.725, "g": 0.714, "b": 0.667, "a": 1 },
+          "isFocusable": false
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/HeaderArea/close/CloseIconText",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "X",
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "textBlock": {
+          "text": "×",
+          "fontSize": 28,
+          "colorAndOpacity": { "r": 0.725, "g": 0.714, "b": 0.667, "a": 1 },
+          "shadowColor": { "r": 0, "g": 0, "b": 0, "a": 0 },
+          "justification": "Center",
+          "minDesiredWidth": 32
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/MainContent/PartyPanel",
+      "expectedClass": "VerticalBox",
+      "expectedCurrent": {
+        "boxSlot": {
+          "fillCoefficient": 0.68000000715255737
+        }
+      },
+      "set": {
+        "boxSlot": {
+          "sizeRule": "Fill",
+          "fillCoefficient": 1,
+          "horizontalAlignment": "Fill",
+          "verticalAlignment": "Fill"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/MainContent/PartyPanel/PartySubtitle",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "选择槽位后替换或交换角色",
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "textBlock": {
+          "text": "点击角色或空槽以更换成员",
+          "fontSize": 15,
+          "colorAndOpacity": { "r": 0.725, "g": 0.714, "b": 0.667, "a": 1 },
+          "shadowColor": { "r": 0, "g": 0, "b": 0, "a": 0 },
+          "justification": "Left"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/MainContent/PartyPanel/OperationHint",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "先选择右侧槽位，再从左侧选择角色",
+          "fontSize": 24,
+          "autoWrapText": false
+        }
+      },
+      "set": {
+        "textBlock": {
+          "text": "选择成员后返回总览；点击确定才会正式生效",
+          "fontSize": 14,
+          "colorAndOpacity": { "r": 0.494, "g": 0.49, "b": 0.459, "a": 1 },
+          "autoWrapText": true,
+          "justification": "Left",
+          "minDesiredWidth": 520
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/MainContent/PartyPanel/ActivePartyBox",
+      "expectedClass": "HorizontalBox",
+      "expectedCurrent": {
+        "isVariable": false,
+        "boxSlot": {
+          "sizeRule": "Auto"
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "boxSlot": {
+          "sizeRule": "Fill",
+          "fillCoefficient": 1,
+          "horizontalAlignment": "Fill",
+          "verticalAlignment": "Fill"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/BottomActionBar",
+      "expectedClass": "HorizontalBox",
+      "expectedCurrent": {
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "zOrder": 20
+        }
+      },
+      "set": {
+        "visibility": "Visible",
+        "canvasSlot": {
+          "position": { "x": -64, "y": -38 },
+          "anchors": {
+            "minimum": { "x": 1, "y": 1 },
+            "maximum": { "x": 1, "y": 1 }
+          },
+          "alignment": { "x": 1, "y": 1 },
+          "autoSize": true,
+          "zOrder": 30
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/BottomActionBar/CancelSizeBox",
+      "expectedClass": "SizeBox",
+      "expectedCurrent": {
+        "sizeBox": {
+          "widthOverride": 160,
+          "heightOverride": 56
+        }
+      },
+      "set": {
+        "sizeBox": {
+          "widthOverride": 154,
+          "heightOverride": 52,
+          "minDesiredWidth": 154,
+          "minDesiredHeight": 52
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/BottomActionBar/CancelSizeBox/CancelButton",
+      "expectedClass": "Button",
+      "expectedCurrent": {
+        "isVariable": true,
+        "button": {
+          "isFocusable": true
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "button": {
+          "backgroundColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "colorAndOpacity": { "r": 0.957, "g": 0.945, "b": 0.91, "a": 1 },
+          "isFocusable": false
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/BottomActionBar/CancelSizeBox/CancelButton/CancelButtonText",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "取消",
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "textBlock": {
+          "text": "取消",
+          "fontSize": 17,
+          "colorAndOpacity": { "r": 0.957, "g": 0.945, "b": 0.91, "a": 1 },
+          "justification": "Center",
+          "minDesiredWidth": 80
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/BottomActionBar/ConfirmSizeBox",
+      "expectedClass": "SizeBox",
+      "expectedCurrent": {
+        "sizeBox": {
+          "widthOverride": 220,
+          "heightOverride": 56
+        }
+      },
+      "set": {
+        "sizeBox": {
+          "widthOverride": 220,
+          "heightOverride": 52,
+          "minDesiredWidth": 220,
+          "minDesiredHeight": 52
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/BottomActionBar/ConfirmSizeBox/ConfirmButton",
+      "expectedClass": "Button",
+      "expectedCurrent": {
+        "isVariable": true,
+        "button": {
+          "isFocusable": true
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "button": {
+          "backgroundColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "colorAndOpacity": { "r": 0.09, "g": 0.094, "b": 0.075, "a": 1 },
+          "isFocusable": false
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/BottomActionBar/ConfirmSizeBox/ConfirmButton/ConfirmButtonText",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "确定",
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "textBlock": {
+          "text": "确定",
+          "fontSize": 18,
+          "colorAndOpacity": { "r": 0.09, "g": 0.094, "b": 0.075, "a": 1 },
+          "justification": "Center",
+          "minDesiredWidth": 100
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/RosterScrollBox",
+      "expectedClass": "ScrollBox",
+      "expectedCurrent": {
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 100, "y": 30 },
+          "zOrder": 0
+        }
+      },
+      "set": {
+        "visibility": "Visible",
+        "canvasSlot": {
+          "position": { "x": 84, "y": 148 },
+          "size": { "x": 1752, "y": 770 },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 10
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/RosterScrollBox/RosterBox",
+      "expectedClass": "WrapBox",
+      "set": {
+        "isVariable": true,
+        "visibility": "Visible"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionHeader",
+      "expectedClass": "CanvasPanel",
+      "expectedCurrent": {
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 100, "y": 30 },
+          "zOrder": 0
+        }
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "canvasSlot": {
+          "position": { "x": 64, "y": 40 },
+          "size": { "x": 1792, "y": 84 },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 10
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionHeader/BackButton",
+      "expectedClass": "Button",
+      "expectedCurrent": {
+        "isVariable": false,
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 100, "y": 30 }
+        },
+        "button": {
+          "isFocusable": true
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "canvasSlot": {
+          "position": { "x": 0, "y": 8 },
+          "size": { "x": 132, "y": 48 },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 0
+        },
+        "button": {
+          "backgroundColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "colorAndOpacity": { "r": 0.957, "g": 0.945, "b": 0.91, "a": 1 },
+          "isFocusable": false
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionHeader/BackButton/BackButtonText",
+      "expectedClass": "TextBlock",
+      "set": {
+        "textBlock": {
+          "text": "←  返回",
+          "fontSize": 16,
+          "colorAndOpacity": { "r": 0.957, "g": 0.945, "b": 0.91, "a": 1 },
+          "justification": "Left",
+          "minDesiredWidth": 112
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionHeader/SelectionTitle",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "Text Block",
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "canvasSlot": {
+          "position": { "x": 170, "y": 0 },
+          "size": { "x": 460, "y": 42 },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 0
+        },
+        "textBlock": {
+          "text": "选择角色",
+          "fontSize": 34,
+          "colorAndOpacity": { "r": 0.957, "g": 0.945, "b": 0.91, "a": 1 },
+          "shadowColor": { "r": 0, "g": 0, "b": 0, "a": 0.45 },
+          "shadowOffset": { "x": 0, "y": 1 },
+          "justification": "Left"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionHeader/SelectionSubtitle",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "isVariable": false
+      },
+      "set": {
+        "isVariable": true,
+        "canvasSlot": {
+          "position": { "x": 172, "y": 45 },
+          "size": { "x": 620, "y": 28 },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 0
+        },
+        "textBlock": {
+          "fontSize": 16,
+          "colorAndOpacity": { "r": 0.725, "g": 0.714, "b": 0.667, "a": 1 },
+          "justification": "Left"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionBottomActionBar",
+      "expectedClass": "CanvasPanel",
+      "expectedCurrent": {
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 100, "y": 30 },
+          "zOrder": 0
+        }
+      },
+      "set": {
+        "visibility": "SelfHitTestInvisible",
+        "canvasSlot": {
+          "position": { "x": -64, "y": -38 },
+          "size": { "x": 240, "y": 54 },
+          "anchors": {
+            "minimum": { "x": 1, "y": 1 },
+            "maximum": { "x": 1, "y": 1 }
+          },
+          "alignment": { "x": 1, "y": 1 },
+          "autoSize": false,
+          "zOrder": 30
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionBottomActionBar/SelectionActionButton",
+      "expectedClass": "Button",
+      "expectedCurrent": {
+        "isVariable": false,
+        "canvasSlot": {
+          "size": { "x": 100, "y": 30 }
+        },
+        "button": {
+          "isFocusable": true
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "canvasSlot": {
+          "position": { "x": 0, "y": 0 },
+          "size": { "x": 240, "y": 54 },
+          "anchors": {
+            "minimum": { "x": 0, "y": 0 },
+            "maximum": { "x": 0, "y": 0 }
+          },
+          "alignment": { "x": 0, "y": 0 },
+          "autoSize": false,
+          "zOrder": 0
+        },
+        "button": {
+          "backgroundColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+          "colorAndOpacity": { "r": 0.09, "g": 0.094, "b": 0.075, "a": 1 },
+          "isFocusable": false
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/HeroSelectionView/SelectionBottomActionBar/SelectionActionButton/SelectionActionText",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "isVariable": false,
+        "textBlock": {
+          "fontSize": 24
+        }
+      },
+      "set": {
+        "isVariable": true,
+        "textBlock": {
+          "fontSize": 18,
+          "colorAndOpacity": { "r": 0.09, "g": 0.094, "b": 0.075, "a": 1 },
+          "justification": "Center",
+          "minDesiredWidth": 140
+        }
+      }
+    }
+  ]
+}

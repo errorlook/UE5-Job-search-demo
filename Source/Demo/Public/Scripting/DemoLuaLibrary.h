@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UI/Menu/PauseMenuTypes.h"
 #include "DemoLuaLibrary.generated.h"
 
 class AOnePlayerController;
@@ -72,4 +73,36 @@ public:
 		meta = (WorldContext = "WorldContextObject"))
 	static void ToggleQuestList(
 		const UObject* WorldContextObject, int32 PlayerIndex = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "Demo|Lua|Pause Menu",
+		meta = (WorldContext = "WorldContextObject"))
+	static void TogglePauseMenu(
+		const UObject* WorldContextObject, int32 PlayerIndex = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "Demo|Lua|Pause Menu",
+		meta = (WorldContext = "WorldContextObject"))
+	static void OpenPauseMenu(
+		const UObject* WorldContextObject, int32 PlayerIndex = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "Demo|Lua|Pause Menu",
+		meta = (WorldContext = "WorldContextObject"))
+	static void ClosePauseMenu(
+		const UObject* WorldContextObject, int32 PlayerIndex = 0);
+
+	UFUNCTION(BlueprintPure, Category = "Demo|Lua|Pause Menu",
+		meta = (WorldContext = "WorldContextObject"))
+	static bool IsPauseMenuOpen(
+		const UObject* WorldContextObject, int32 PlayerIndex = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "Demo|Lua|Pause Menu",
+		meta = (WorldContext = "WorldContextObject"))
+	static void RequestPauseMenuAction(
+		const UObject* WorldContextObject, EPauseMenuAction Action,
+		int32 PlayerIndex = 0);
+
+	UFUNCTION(BlueprintCallable, Category = "Demo|Lua|Pause Menu",
+		meta = (WorldContext = "WorldContextObject"))
+	static void ConfirmPauseMenuAction(
+		const UObject* WorldContextObject, bool bConfirmed,
+		int32 PlayerIndex = 0);
 };

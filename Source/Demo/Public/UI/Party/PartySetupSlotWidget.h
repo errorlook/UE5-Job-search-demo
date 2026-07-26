@@ -9,6 +9,7 @@ class UBorder;
 class UButton;
 class UImage;
 class URichTextBlock;
+class UTextBlock;
 class UWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
@@ -26,6 +27,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Party|Setup")
 	void SetSelected(bool bInSelected);
+
+	UFUNCTION(BlueprintCallable, Category = "Party|Setup")
+	void SetActive(bool bInActive);
 
 	UFUNCTION(BlueprintPure, Category = "Party|Setup")
 	int32 GetSlotIndex() const { return SlotData.SlotIndex; }
@@ -66,9 +70,19 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UBorder> SelectedFrame;
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UTextBlock> SlotNumberText;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UBorder> ActiveBadge;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UTextBlock> ActiveBadgeText;
+
 private:
 	UFUNCTION()
 	void HandleSlotClicked();
 
 	void RefreshPresentation();
+	bool bIsActive = false;
 };

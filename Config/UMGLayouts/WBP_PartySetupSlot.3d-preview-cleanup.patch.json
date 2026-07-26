@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 2,
+  "assetPath": "/Game/_Game/BluePrints/UI/Overlay/WBP_PartySetupSlot",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/FullBodyImage",
+      "widgetName": "FullBodyImage",
+      "expectedClass": "Image",
+      "expectedCurrent": {
+        "visibility": "SelfHitTestInvisible"
+      },
+      "set": {
+        "visibility": "Collapsed"
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotBackground",
+      "widgetName": "SlotBackground",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "border": {
+          "brushColor": {
+            "r": 0.035,
+            "g": 0.039,
+            "b": 0.035,
+            "a": 0.95
+          }
+        }
+      },
+      "set": {
+        "border": {
+          "brushColor": {
+            "r": 0.03,
+            "g": 0.04,
+            "b": 0.05,
+            "a": 0.12
+          }
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/CardSurface",
+      "widgetName": "CardSurface",
+      "expectedClass": "Border",
+      "expectedCurrent": {
+        "border": {
+          "brushColor": {
+            "r": 0.09,
+            "g": 0.09,
+            "b": 0.075,
+            "a": 0.32
+          }
+        }
+      },
+      "set": {
+        "border": {
+          "brushColor": {
+            "r": 0.03,
+            "g": 0.04,
+            "b": 0.05,
+            "a": 0.06
+          }
+        }
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotButton",
+      "widgetName": "SlotButton",
+      "expectedClass": "Button",
+      "expectedCurrent": {
+        "button": {
+          "backgroundColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        }
+      },
+      "set": {
+        "button": {
+          "backgroundColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 0
+          }
+        }
+      }
+    }
+  ]
+}

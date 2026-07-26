@@ -8,6 +8,19 @@
 
 class UHeroUIInfo;
 
+UENUM(BlueprintType)
+enum class EPartySetupApplyResult : uint8
+{
+	Success,
+	InvalidParty,
+	InvalidActiveSlot,
+	UnknownHero,
+	MissingCharacterClass,
+	SpawnFailed,
+	PossessFailed,
+	AlreadyProcessing
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPartyStateChangedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FHeroUnlockedSignature, FGameplayTag, HeroTag);
@@ -50,6 +63,20 @@ public:
 	// Always returns MaxPartySize entries, including empty slots.
 	UFUNCTION(BlueprintPure, Category = "Party|Setup")
 	TArray<FPartySlotViewData> GetPartySlots() const;
+
+	UFUNCTION(BlueprintPure, Category = "Party|Setup")
+	int32 GetActiveSlotIndex() const { return ActiveSlotIndex; }
+
+	UFUNCTION(BlueprintPure, Category = "Party|Setup")
+	FGameplayTag GetActiveHeroTag() const;
+
+	EPartySetupApplyResult ValidatePartySetup(
+		const TArray<FGameplayTag>& NewParty,
+		int32 NewActiveSlotIndex) const;
+
+	bool ApplyPartySetup(
+		const TArray<FGameplayTag>& NewParty,
+		int32 NewActiveSlotIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Party|Setup")
 	bool SetPartySlot(int32 SlotIndex, FGameplayTag HeroTag);
@@ -96,6 +123,9 @@ private:
 	bool ClearPartySlotInternal(int32 SlotIndex);
 	bool SwapPartySlotsInternal(int32 FirstSlotIndex, int32 SecondSlotIndex);
 	void NormalizePartySlots();
+	void RestoreActiveSlotForHero(
+		FGameplayTag PreviousActiveHero, int32 PreferredFallbackSlot);
+	void NotifyPartyChanged();
 	int32 GetOccupiedPartyCount() const;
 	int32 FindFirstEmptyPartySlot() const;
 	void InitializeStartingParty();
@@ -125,15 +155,24 @@ private:
 		const TArray<FGameplayTag>& PreviousHeroTags);
 
 	UFUNCTION()
-	void OnRep_ActivePartyTags();
+	void OnRep_PartyStateRevision();
 
 	UPROPERTY(ReplicatedUsing = OnRep_UnlockedHeroTags, VisibleAnywhere,
 		BlueprintReadOnly, Category = "Party|State",
 		meta = (AllowPrivateAccess = "true"))
 	TArray<FGameplayTag> UnlockedHeroTags;
 
-	UPROPERTY(ReplicatedUsing = OnRep_ActivePartyTags, VisibleAnywhere,
+	UPROPERTY(Replicated, VisibleAnywhere,
 		BlueprintReadOnly, Category = "Party|State",
 		meta = (AllowPrivateAccess = "true"))
 	TArray<FGameplayTag> ActivePartyTags;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly,
+		Category = "Party|State", meta = (AllowPrivateAccess = "true"))
+	int32 ActiveSlotIndex = 0;
+
+	// The slots and active index replicate as one logical update. Only this
+	// revision invokes the client-side party notification.
+	UPROPERTY(ReplicatedUsing = OnRep_PartyStateRevision)
+	int32 PartyStateRevision = 0;
 };

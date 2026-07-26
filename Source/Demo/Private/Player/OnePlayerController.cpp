@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/GameModeBase.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "UI/Widget/DamageTextComponent.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
 #include "AbilitySystem/Data/HeroUIInfo.h"
@@ -19,9 +20,12 @@
 #include "UI/Widget/PlayerUserWidget.h"
 #include "Character/BossCharacter.h"
 #include "UI/Dialogue/DialogueWidget.h"
+#include "UI/Menu/PauseMenuWidget.h"
+#include "UI/Party/PartySetupWidget.h"
 #include "Player/OPlayerState.h"
-#include "InputCoreTypes.h"
 #include "Components/SkeletalMeshComponent.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogPauseMenu, Log, All);
 
 AOnePlayerController::AOnePlayerController()
 {
@@ -91,6 +95,9 @@ void AOnePlayerController::ClientShowDeathScreen_Implementation()
         DeathScreenInstance = CreateWidget<UUserWidget>(this, DeathScreenClass);
     }
     if (!DeathScreenInstance) return;
+
+    if (ActiveDialogueWidget) CloseDialogue();
+    if (ActiveManagedMenu) CloseManagedMenu(ActiveManagedMenu);
 
     if (!DeathScreenInstance->IsInViewport())
     {
@@ -180,6 +187,14 @@ void AOnePlayerController::ClientHideDeathScreen_Implementation()
 
 void AOnePlayerController::ToggleMouseCursor()
 {
+    // Modal UI owns cursor visibility and input routing until it closes.
+    if ((ActiveManagedMenu && ActiveManagedMenu->IsInViewport()) ||
+        ActiveDialogueWidget ||
+        (DeathScreenInstance && DeathScreenInstance->IsInViewport()))
+    {
+        return;
+    }
+
     bShowMouseCursor = !bShowMouseCursor;
 
     // Switch input routing with cursor visibility.
@@ -237,23 +252,50 @@ void AOnePlayerController::SetupInputComponent()
         }
         else
         {
-            // Keep the party screen usable when a controller Blueprint has not
-            // assigned IA_Party yet. IMC_PlayerContext maps IA_Party to L.
-            InputComponent->BindKey(EKeys::L, IE_Pressed,
-                this, &AOnePlayerController::TogglePartyPage);
+            UE_LOG(LogTemp, Error,
+                TEXT("%s requires PartyAction to be assigned."),
+                *GetName());
+        }
+
+        if (PauseMenuAction)
+        {
+            EnhancedInputComponent->BindAction(
+                PauseMenuAction, ETriggerEvent::Started,
+                this, &AOnePlayerController::TogglePauseMenu);
+        }
+        else
+        {
+            UE_LOG(LogPauseMenu, Error,
+                TEXT("%s requires PauseMenuAction to be assigned."),
+                *GetName());
+        }
+
+        if (PartySlot1Action)
+        {
+            EnhancedInputComponent->BindAction(
+                PartySlot1Action, ETriggerEvent::Started,
+                this, &AOnePlayerController::SwitchToPartySlot1);
+        }
+        if (PartySlot2Action)
+        {
+            EnhancedInputComponent->BindAction(
+                PartySlot2Action, ETriggerEvent::Started,
+                this, &AOnePlayerController::SwitchToPartySlot2);
+        }
+        if (PartySlot3Action)
+        {
+            EnhancedInputComponent->BindAction(
+                PartySlot3Action, ETriggerEvent::Started,
+                this, &AOnePlayerController::SwitchToPartySlot3);
+        }
+        if (PartySlot4Action)
+        {
+            EnhancedInputComponent->BindAction(
+                PartySlot4Action, ETriggerEvent::Started,
+                this, &AOnePlayerController::SwitchToPartySlot4);
         }
     }
 
-    // Party switching remains available even when the Enhanced Input mapping
-    // context has not yet been updated with four dedicated actions.
-    InputComponent->BindKey(EKeys::One, IE_Pressed,
-        this, &AOnePlayerController::SwitchToPartySlot1);
-    InputComponent->BindKey(EKeys::Two, IE_Pressed,
-        this, &AOnePlayerController::SwitchToPartySlot2);
-    InputComponent->BindKey(EKeys::Three, IE_Pressed,
-        this, &AOnePlayerController::SwitchToPartySlot3);
-    InputComponent->BindKey(EKeys::Four, IE_Pressed,
-        this, &AOnePlayerController::SwitchToPartySlot4);
 }
 
 void AOnePlayerController::SwitchToPartySlot1() { SwitchToPartySlot(0); }
@@ -263,9 +305,9 @@ void AOnePlayerController::SwitchToPartySlot4() { SwitchToPartySlot(3); }
 
 void AOnePlayerController::SwitchToPartySlot(int32 SlotIndex)
 {
-    if (!IsLocalController() || IsPaused() || ActiveDialogueWidget ||
-        (PartyWidgetInstance && PartyWidgetInstance->IsInViewport()) ||
-        (QuestListWidgetInstance && QuestListWidgetInstance->IsInViewport()))
+    if (!IsLocalController() || IsGameplayInputBlockedByPauseMenu() ||
+        IsPaused() || ActiveDialogueWidget ||
+        (ActiveManagedMenu && ActiveManagedMenu->IsInViewport()))
     {
         return;
     }
@@ -300,15 +342,58 @@ void AOnePlayerController::PerformPartySwitch(int32 SlotIndex)
         return;
     }
 
-    const TSubclassOf<APlayerCharacter> CharacterClass =
-        PartySlots[SlotIndex].HeroInfo.CharacterClass.LoadSynchronous();
-    APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetPawn());
-    if (!CharacterClass || (CurrentCharacter &&
-        CurrentCharacter->IsA(CharacterClass)))
+    TArray<FGameplayTag> CurrentParty;
+    CurrentParty.Reserve(PartySlots.Num());
+    for (const FPartySlotViewData& Slot : PartySlots)
+    {
+        CurrentParty.Add(Slot.bOccupied
+            ? Slot.HeroInfo.HeroTag
+            : FGameplayTag());
+    }
+    if (PartyComponent->ValidatePartySetup(CurrentParty, SlotIndex) !=
+        EPartySetupApplyResult::Success)
     {
         return;
     }
 
+    const FGameplayTag TargetHeroTag = PartySlots[SlotIndex].HeroInfo.HeroTag;
+    const FGameplayTag CurrentHeroTag =
+        ResolveCurrentPawnHeroTag(PartyComponent);
+    if (CurrentHeroTag != TargetHeroTag &&
+        PerformPartySwitchToHero(TargetHeroTag) !=
+            EPartySetupApplyResult::Success)
+    {
+        return;
+    }
+    if (!PartyComponent->ApplyPartySetup(CurrentParty, SlotIndex))
+    {
+        UE_LOG(LogTemp, Error,
+            TEXT("Failed to update the active party slot after switching."));
+    }
+}
+
+EPartySetupApplyResult AOnePlayerController::PerformPartySwitchToHero(
+    FGameplayTag TargetHeroTag)
+{
+    AOPlayerState* OPlayerState = GetPlayerState<AOPlayerState>();
+    UPartyComponent* PartyComponent = OPlayerState
+        ? OPlayerState->GetPartyComponent()
+        : nullptr;
+    FHeroSlotInfo TargetHeroInfo;
+    if (!PartyComponent ||
+        !PartyComponent->FindHeroInfo(TargetHeroTag, TargetHeroInfo))
+    {
+        return EPartySetupApplyResult::UnknownHero;
+    }
+
+    const TSubclassOf<APlayerCharacter> CharacterClass =
+        TargetHeroInfo.CharacterClass.LoadSynchronous();
+    if (!CharacterClass)
+    {
+        return EPartySetupApplyResult::MissingCharacterClass;
+    }
+
+    APlayerCharacter* CurrentCharacter = Cast<APlayerCharacter>(GetPawn());
     const FTransform SpawnTransform = CurrentCharacter
         ? CurrentCharacter->GetActorTransform()
         : FTransform::Identity;
@@ -320,21 +405,155 @@ void AOnePlayerController::PerformPartySwitch(int32 SlotIndex)
 
     APlayerCharacter* NewCharacter = GetWorld()->SpawnActor<APlayerCharacter>(
         CharacterClass, SpawnTransform, SpawnParameters);
-    if (!NewCharacter) return;
+    if (!NewCharacter)
+    {
+        return EPartySetupApplyResult::SpawnFailed;
+    }
 
     APawn* PreviousPawn = GetPawn();
     Possess(NewCharacter);
+
+    if (GetPawn() != NewCharacter || NewCharacter->GetController() != this)
+    {
+        if (IsValid(PreviousPawn) && GetPawn() != PreviousPawn)
+        {
+            Possess(PreviousPawn);
+        }
+        NewCharacter->Destroy();
+        return EPartySetupApplyResult::PossessFailed;
+    }
 
     if (USkeletalMeshComponent* CharacterMesh = NewCharacter->GetMesh())
     {
         CharacterMesh->InitAnim(true);
     }
     if (IsValid(PreviousPawn)) PreviousPawn->Destroy();
+
+    return EPartySetupApplyResult::Success;
+}
+
+FGameplayTag AOnePlayerController::ResolveCurrentPawnHeroTag(
+    const UPartyComponent* PartyComponent) const
+{
+    const APlayerCharacter* CurrentCharacter =
+        Cast<APlayerCharacter>(GetPawn());
+    if (!PartyComponent || !CurrentCharacter) return FGameplayTag();
+
+    auto MatchesCurrentPawn = [CurrentCharacter](const FHeroSlotInfo& HeroInfo)
+    {
+        const UClass* CharacterClass =
+            HeroInfo.CharacterClass.LoadSynchronous();
+        return CharacterClass && CurrentCharacter->GetClass() == CharacterClass;
+    };
+
+    FHeroSlotInfo ActiveHeroInfo;
+    const FGameplayTag ActiveHeroTag = PartyComponent->GetActiveHeroTag();
+    if (PartyComponent->FindHeroInfo(ActiveHeroTag, ActiveHeroInfo) &&
+        MatchesCurrentPawn(ActiveHeroInfo))
+    {
+        return ActiveHeroTag;
+    }
+
+    for (const FHeroSlotInfo& HeroInfo : PartyComponent->GetUnlockedHeroInfo())
+    {
+        if (MatchesCurrentPawn(HeroInfo)) return HeroInfo.HeroTag;
+    }
+    return FGameplayTag();
+}
+
+void AOnePlayerController::RequestApplyPartySetup(
+    const TArray<FGameplayTag>& NewParty, int32 NewActiveSlotIndex)
+{
+    if (!IsLocalController()) return;
+    if (bPartySetupRequestInFlight)
+    {
+        OnPartySetupApplyResult.Broadcast(
+            EPartySetupApplyResult::AlreadyProcessing);
+        return;
+    }
+
+    bPartySetupRequestInFlight = true;
+    if (HasAuthority())
+    {
+        const EPartySetupApplyResult Result =
+            ProcessPartySetupRequest(NewParty, NewActiveSlotIndex);
+        bPartySetupRequestInFlight = false;
+        OnPartySetupApplyResult.Broadcast(Result);
+    }
+    else
+    {
+        ServerRequestApplyPartySetup(NewParty, NewActiveSlotIndex);
+    }
+}
+
+void AOnePlayerController::ServerRequestApplyPartySetup_Implementation(
+    const TArray<FGameplayTag>& NewParty, int32 NewActiveSlotIndex)
+{
+    if (bPartySetupRequestInFlight)
+    {
+        ClientPartySetupApplyResult(
+            EPartySetupApplyResult::AlreadyProcessing);
+        return;
+    }
+
+    bPartySetupRequestInFlight = true;
+    const EPartySetupApplyResult Result =
+        ProcessPartySetupRequest(NewParty, NewActiveSlotIndex);
+    bPartySetupRequestInFlight = false;
+    ClientPartySetupApplyResult(Result);
+}
+
+void AOnePlayerController::ClientPartySetupApplyResult_Implementation(
+    EPartySetupApplyResult Result)
+{
+    bPartySetupRequestInFlight = false;
+    OnPartySetupApplyResult.Broadcast(Result);
+}
+
+EPartySetupApplyResult AOnePlayerController::ProcessPartySetupRequest(
+    const TArray<FGameplayTag>& NewParty, int32 NewActiveSlotIndex)
+{
+    AOPlayerState* OPlayerState = GetPlayerState<AOPlayerState>();
+    UPartyComponent* PartyComponent = OPlayerState
+        ? OPlayerState->GetPartyComponent()
+        : nullptr;
+    if (!PartyComponent)
+    {
+        return EPartySetupApplyResult::InvalidParty;
+    }
+
+    const EPartySetupApplyResult ValidationResult =
+        PartyComponent->ValidatePartySetup(NewParty, NewActiveSlotIndex);
+    if (ValidationResult != EPartySetupApplyResult::Success)
+    {
+        return ValidationResult;
+    }
+
+    const FGameplayTag TargetHeroTag = NewParty[NewActiveSlotIndex];
+    const FGameplayTag CurrentHeroTag =
+        ResolveCurrentPawnHeroTag(PartyComponent);
+    if (CurrentHeroTag != TargetHeroTag)
+    {
+        const EPartySetupApplyResult SwitchResult =
+            PerformPartySwitchToHero(TargetHeroTag);
+        if (SwitchResult != EPartySetupApplyResult::Success)
+        {
+            return SwitchResult;
+        }
+    }
+
+    if (!PartyComponent->ApplyPartySetup(NewParty, NewActiveSlotIndex))
+    {
+        UE_LOG(LogTemp, Error,
+            TEXT("Validated party setup failed during authoritative apply."));
+        return EPartySetupApplyResult::InvalidParty;
+    }
+    return EPartySetupApplyResult::Success;
 }
 
 void AOnePlayerController::ToggleQuestList()
 {
-    if (!IsLocalController()) return;
+    if (!IsLocalController() || IsGameplayInputBlockedByPauseMenu()) return;
 
     if (QuestListWidgetInstance && QuestListWidgetInstance->IsInViewport())
     {
@@ -351,10 +570,6 @@ void AOnePlayerController::ToggleQuestList()
         return;
     }
 
-    if (PartyWidgetInstance && PartyWidgetInstance->IsInViewport())
-    {
-        PartyWidgetInstance->RemoveFromParent();
-    }
     if (!QuestListWidgetInstance)
     {
         QuestListWidgetInstance =
@@ -365,11 +580,19 @@ void AOnePlayerController::ToggleQuestList()
 
 void AOnePlayerController::TogglePartyPage()
 {
-    if (!IsLocalController()) return;
+    if (!IsLocalController() || IsGameplayInputBlockedByPauseMenu()) return;
 
     if (PartyWidgetInstance && PartyWidgetInstance->IsInViewport())
     {
-        CloseManagedMenu(PartyWidgetInstance);
+        if (UPartySetupWidget* PartySetupWidget =
+            Cast<UPartySetupWidget>(PartyWidgetInstance))
+        {
+            PartySetupWidget->RequestCancel();
+        }
+        else
+        {
+            CloseManagedMenu(PartyWidgetInstance);
+        }
         return;
     }
 
@@ -382,10 +605,6 @@ void AOnePlayerController::TogglePartyPage()
         return;
     }
 
-    if (QuestListWidgetInstance && QuestListWidgetInstance->IsInViewport())
-    {
-        QuestListWidgetInstance->RemoveFromParent();
-    }
     if (!PartyWidgetInstance)
     {
         PartyWidgetInstance =
@@ -394,50 +613,404 @@ void AOnePlayerController::TogglePartyPage()
     OpenManagedMenu(PartyWidgetInstance, OPlayerState->GetPartyComponent());
 }
 
+void AOnePlayerController::TogglePauseMenu()
+{
+    if (!IsLocalController()) return;
+
+    if (!IsPauseMenuOpen())
+    {
+        OpenPauseMenu();
+        return;
+    }
+
+    if (PauseMenuPage != EPauseMenuPage::Main)
+    {
+        PendingPauseMenuAction = EPauseMenuAction::None;
+        SetPauseMenuPage(EPauseMenuPage::Main);
+        return;
+    }
+
+    ClosePauseMenu();
+}
+
+void AOnePlayerController::OpenPauseMenu()
+{
+    if (!IsLocalController() || IsPauseMenuOpen()) return;
+    if (DeathScreenInstance && DeathScreenInstance->IsInViewport()) return;
+    if (ActiveDialogueWidget)
+    {
+        UE_LOG(LogPauseMenu, Log,
+            TEXT("%s rejected pause menu open because a dialogue is active."),
+            *GetName());
+        return;
+    }
+
+    if (!PauseMenuWidgetClass)
+    {
+        UE_LOG(LogPauseMenu, Error,
+            TEXT("%s requires PauseMenuWidgetClass."), *GetName());
+        return;
+    }
+
+    if (!PauseMenuWidgetInstance)
+    {
+        PauseMenuWidgetInstance =
+            CreateWidget<UPauseMenuWidget>(this, PauseMenuWidgetClass);
+    }
+    if (!PauseMenuWidgetInstance) return;
+
+    OpenManagedMenu(PauseMenuWidgetInstance, 150);
+    if (ActiveManagedMenu != PauseMenuWidgetInstance) return;
+
+    PauseMenuPage = EPauseMenuPage::Main;
+    PendingPauseMenuAction = EPauseMenuAction::None;
+    bPauseMenuStateBroadcastOpen = true;
+    OnPauseMenuStateChanged.Broadcast(true);
+    OnPauseMenuPageChanged.Broadcast(PauseMenuPage);
+}
+
+void AOnePlayerController::ClosePauseMenu()
+{
+    if (!IsPauseMenuOpen()) return;
+    CloseManagedMenu(PauseMenuWidgetInstance);
+}
+
+bool AOnePlayerController::IsPauseMenuOpen() const
+{
+    return PauseMenuWidgetInstance &&
+        ActiveManagedMenu == PauseMenuWidgetInstance &&
+        PauseMenuWidgetInstance->IsInViewport();
+}
+
+void AOnePlayerController::RequestPauseMenuAction(EPauseMenuAction Action)
+{
+    if (!IsLocalController() || !IsPauseMenuOpen()) return;
+
+    switch (Action)
+    {
+    case EPauseMenuAction::Continue:
+        ClosePauseMenu();
+        break;
+    case EPauseMenuAction::OpenSettings:
+        PendingPauseMenuAction = EPauseMenuAction::None;
+        SetPauseMenuPage(EPauseMenuPage::Settings);
+        break;
+    case EPauseMenuAction::ReturnToPauseMenu:
+        PendingPauseMenuAction = EPauseMenuAction::None;
+        SetPauseMenuPage(EPauseMenuPage::Main);
+        break;
+    case EPauseMenuAction::ReturnToMainMenu:
+    case EPauseMenuAction::ExitGame:
+        PendingPauseMenuAction = Action;
+        SetPauseMenuPage(EPauseMenuPage::Confirmation);
+        OnPauseMenuConfirmationRequested.Broadcast(Action);
+        break;
+    case EPauseMenuAction::None:
+    default:
+        break;
+    }
+}
+
+void AOnePlayerController::ConfirmPauseMenuAction(bool bConfirmed)
+{
+    if (!IsLocalController() || !IsPauseMenuOpen() ||
+        PendingPauseMenuAction == EPauseMenuAction::None)
+    {
+        return;
+    }
+
+    const EPauseMenuAction ConfirmedAction = PendingPauseMenuAction;
+    PendingPauseMenuAction = EPauseMenuAction::None;
+
+    if (!bConfirmed)
+    {
+        SetPauseMenuPage(EPauseMenuPage::Main);
+        return;
+    }
+
+    ExecuteConfirmedPauseMenuAction(ConfirmedAction);
+}
+
+void AOnePlayerController::SetPauseMenuPage(EPauseMenuPage NewPage)
+{
+    if (!IsPauseMenuOpen() || PauseMenuPage == NewPage) return;
+
+    PauseMenuPage = NewPage;
+    OnPauseMenuPageChanged.Broadcast(PauseMenuPage);
+}
+
+void AOnePlayerController::ExecuteConfirmedPauseMenuAction(
+    EPauseMenuAction Action)
+{
+    if (Action == EPauseMenuAction::ReturnToMainMenu)
+    {
+        if (MainMenuLevel.IsNull())
+        {
+            UE_LOG(LogPauseMenu, Error,
+                TEXT("%s requires MainMenuLevel before returning to menu."),
+                *GetName());
+            SetPauseMenuPage(EPauseMenuPage::Main);
+            return;
+        }
+
+        const FString MainMenuPackageName =
+            MainMenuLevel.ToSoftObjectPath().GetLongPackageName();
+        ClosePauseMenu();
+        ClientTravel(MainMenuPackageName, TRAVEL_Absolute);
+        return;
+    }
+
+    if (Action == EPauseMenuAction::ExitGame)
+    {
+        ClosePauseMenu();
+        UKismetSystemLibrary::QuitGame(
+            this, this, EQuitPreference::Quit, false);
+    }
+}
+
 void AOnePlayerController::OpenManagedMenu(
     UPlayerUserWidget* Widget, UObject* DataSource)
 {
     if (!Widget || !DataSource) return;
 
     Widget->SetWidgetController(DataSource);
-    if (!Widget->IsInViewport()) Widget->AddToViewport(100);
+    OpenManagedMenu(static_cast<UUserWidget*>(Widget), 100);
+}
+
+void AOnePlayerController::OpenManagedMenu(UUserWidget* Widget, int32 ZOrder)
+{
+    if (!Widget) return;
+
+    if (ActiveDialogueWidget)
+    {
+        UE_LOG(LogPauseMenu, Verbose,
+            TEXT("%s rejected managed menu '%s' because a dialogue is active."),
+            *GetName(), *GetNameSafe(Widget));
+        return;
+    }
+    if (ActiveManagedMenu)
+    {
+        if (ActiveManagedMenu == Widget && Widget->IsInViewport()) return;
+        CloseManagedMenu(ActiveManagedMenu);
+    }
+
+    if (!Widget->IsInViewport()) Widget->AddToViewport(ZOrder);
+    ActiveManagedMenu = Widget;
+
+    if (Widget == PauseMenuWidgetInstance)
+    {
+        ApplyPauseMenuInputState(Widget);
+    }
+    else
+    {
+        FInputModeGameAndUI InputMode;
+        InputMode.SetWidgetToFocus(Widget->TakeWidget());
+        InputMode.SetHideCursorDuringCapture(false);
+        SetInputMode(InputMode);
+        bShowMouseCursor = true;
+        SetIgnoreMoveInput(true);
+        SetIgnoreLookInput(true);
+        SetGameplayPausedForMenu(true);
+    }
+}
+
+bool AOnePlayerController::CloseManagedMenu(UUserWidget* Widget)
+{
+    if (!Widget || Widget != ActiveManagedMenu) return false;
+
+    const bool bClosingPauseMenu = Widget == PauseMenuWidgetInstance;
+    if (bClosingPauseMenu)
+    {
+        // Broadcast while the widget is still attached and subscribed.
+        ResetPauseMenuState();
+    }
+
+    ActiveManagedMenu = nullptr;
+    Widget->RemoveFromParent();
+    if (bClosingPauseMenu)
+    {
+        RestorePauseMenuInputState();
+    }
+    else
+    {
+        RestoreGameplayInput();
+    }
+    return true;
+}
+
+void AOnePlayerController::NotifyPauseMenuWidgetRemoved(
+    UPauseMenuWidget* Widget)
+{
+    if (!Widget || Widget != PauseMenuWidgetInstance ||
+        ActiveManagedMenu != Widget)
+    {
+        return;
+    }
+
+    ResetPauseMenuState();
+    ActiveManagedMenu = nullptr;
+    RestorePauseMenuInputState();
+}
+
+void AOnePlayerController::ResetPauseMenuState()
+{
+    PauseMenuPage = EPauseMenuPage::Main;
+    PendingPauseMenuAction = EPauseMenuAction::None;
+
+    if (!bPauseMenuStateBroadcastOpen) return;
+
+    bPauseMenuStateBroadcastOpen = false;
+    OnPauseMenuStateChanged.Broadcast(false);
+}
+
+void AOnePlayerController::ApplyPauseMenuInputState(
+    UUserWidget* WidgetToFocus)
+{
+    if (bPauseMenuInputStateCaptured) return;
+
+    bPauseMenuInputStateCaptured = true;
+    bMouseCursorVisibleBeforePauseMenu = bShowMouseCursor;
 
     FInputModeGameAndUI InputMode;
-    InputMode.SetWidgetToFocus(Widget->TakeWidget());
+    if (WidgetToFocus)
+    {
+        InputMode.SetWidgetToFocus(WidgetToFocus->TakeWidget());
+    }
+    InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
     InputMode.SetHideCursorDuringCapture(false);
     SetInputMode(InputMode);
     bShowMouseCursor = true;
-    SetIgnoreMoveInput(true);
-    SetIgnoreLookInput(true);
-    SetPause(true);
-}
 
-bool AOnePlayerController::CloseManagedMenu(UPlayerUserWidget* Widget)
-{
-    if (!Widget ||
-        (Widget != QuestListWidgetInstance && Widget != PartyWidgetInstance))
+    if (!IsMoveInputIgnored())
     {
-        return false;
+        SetIgnoreMoveInput(true);
+        bMoveInputIgnoredByPauseMenu = true;
+    }
+    if (!IsLookInputIgnored())
+    {
+        SetIgnoreLookInput(true);
+        bLookInputIgnoredByPauseMenu = true;
     }
 
-    Widget->RemoveFromParent();
-    RestoreGameplayInput();
-    return true;
+    if (APawn* ControlledPawn = GetPawn();
+        ControlledPawn && ControlledPawn->InputEnabled())
+    {
+        ControlledPawn->DisableInput(this);
+        if (!ControlledPawn->InputEnabled())
+        {
+            PauseMenuInputDisabledPawn = ControlledPawn;
+            bGameplayInputDisabledByPauseMenu = true;
+        }
+    }
+
+    if (GetNetMode() == NM_Standalone)
+    {
+        if (IsPaused())
+        {
+            UE_LOG(LogPauseMenu, Verbose,
+                TEXT("%s opened while the world was already paused; "
+                     "the pause menu will not own that pause."),
+                *GetName());
+        }
+        else
+        {
+            bPauseAppliedByPauseMenu = SetPause(true);
+            if (!bPauseAppliedByPauseMenu)
+            {
+                UE_LOG(LogPauseMenu, Error,
+                    TEXT("%s could not pause the standalone world; "
+                         "local gameplay input remains blocked."),
+                    *GetName());
+            }
+        }
+    }
+
+    UE_LOG(LogPauseMenu, Log,
+        TEXT("%s captured pause-menu input state "
+             "(PawnInput=%s, StandalonePause=%s)."),
+        *GetName(),
+        bGameplayInputDisabledByPauseMenu ? TEXT("blocked") : TEXT("unchanged"),
+        bPauseAppliedByPauseMenu ? TEXT("owned") : TEXT("not-owned"));
+}
+
+void AOnePlayerController::RestorePauseMenuInputState()
+{
+    if (!bPauseMenuInputStateCaptured) return;
+
+    if (bPauseAppliedByPauseMenu)
+    {
+        if (!SetPause(false))
+        {
+            UE_LOG(LogPauseMenu, Warning,
+                TEXT("%s failed to release the pause owned by the pause menu."),
+                *GetName());
+        }
+        bPauseAppliedByPauseMenu = false;
+    }
+
+    if (bGameplayInputDisabledByPauseMenu)
+    {
+        if (APawn* DisabledPawn = PauseMenuInputDisabledPawn.Get())
+        {
+            DisabledPawn->EnableInput(this);
+        }
+        PauseMenuInputDisabledPawn.Reset();
+        bGameplayInputDisabledByPauseMenu = false;
+    }
+
+    if (bMoveInputIgnoredByPauseMenu)
+    {
+        SetIgnoreMoveInput(false);
+        bMoveInputIgnoredByPauseMenu = false;
+    }
+    if (bLookInputIgnoredByPauseMenu)
+    {
+        SetIgnoreLookInput(false);
+        bLookInputIgnoredByPauseMenu = false;
+    }
+
+    bShowMouseCursor = bMouseCursorVisibleBeforePauseMenu;
+    if (bShowMouseCursor)
+    {
+        FInputModeGameAndUI InputMode;
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        InputMode.SetHideCursorDuringCapture(false);
+        SetInputMode(InputMode);
+    }
+    else
+    {
+        FInputModeGameOnly InputMode;
+        SetInputMode(InputMode);
+    }
+
+    bPauseMenuInputStateCaptured = false;
+
+    UE_LOG(LogPauseMenu, Log,
+        TEXT("%s restored the input state owned by the pause menu."),
+        *GetName());
+}
+
+bool AOnePlayerController::IsGameplayInputBlockedByPauseMenu() const
+{
+    return bPauseMenuInputStateCaptured;
 }
 
 void AOnePlayerController::RestoreGameplayInput()
 {
-    const bool bAnotherMenuOpen =
-        (QuestListWidgetInstance && QuestListWidgetInstance->IsInViewport()) ||
-        (PartyWidgetInstance && PartyWidgetInstance->IsInViewport());
-    if (bAnotherMenuOpen) return;
-
-    SetPause(false);
+    SetGameplayPausedForMenu(false);
     SetIgnoreMoveInput(false);
     SetIgnoreLookInput(false);
     bShowMouseCursor = false;
     FInputModeGameOnly InputMode;
     SetInputMode(InputMode);
+}
+
+void AOnePlayerController::SetGameplayPausedForMenu(bool bPaused)
+{
+    if (GetNetMode() == NM_Standalone)
+    {
+        SetPause(bPaused);
+    }
 }
 
 void AOnePlayerController::OpenDialogue(UDialogueDataAsset* DialogueData, AActor* InteractionSource)
@@ -446,6 +1019,8 @@ void AOnePlayerController::OpenDialogue(UDialogueDataAsset* DialogueData, AActor
 
     ActiveDialogueWidget = CreateWidget<UDialogueWidget>(this, DialogueWidgetClass);
     if (!ActiveDialogueWidget) return;
+
+    if (ActiveManagedMenu) CloseManagedMenu(ActiveManagedMenu);
 
     ActiveInteractionSource = InteractionSource;
     ActiveDialogueWidget->OnDialogueFinished.AddDynamic(this, &AOnePlayerController::HandleDialogueFinished);
@@ -456,20 +1031,23 @@ void AOnePlayerController::OpenDialogue(UDialogueDataAsset* DialogueData, AActor
     InputMode.SetHideCursorDuringCapture(false);
     SetInputMode(InputMode);
     bShowMouseCursor = true;
-    SetPause(true);
+    SetIgnoreMoveInput(true);
+    SetIgnoreLookInput(true);
+    SetGameplayPausedForMenu(true);
     ActiveDialogueWidget->InitializeDialogue(DialogueData);
 }
 
 void AOnePlayerController::CloseDialogue()
 {
-    if (ActiveDialogueWidget)
-    {
-        ActiveDialogueWidget->RemoveFromParent();
-        ActiveDialogueWidget = nullptr;
-    }
+    if (!ActiveDialogueWidget) return;
+
+    ActiveDialogueWidget->RemoveFromParent();
+    ActiveDialogueWidget = nullptr;
 
     ActiveInteractionSource = nullptr;
-    SetPause(false);
+    SetGameplayPausedForMenu(false);
+    SetIgnoreMoveInput(false);
+    SetIgnoreLookInput(false);
     bShowMouseCursor = false;
     FInputModeGameOnly InputMode;
     SetInputMode(InputMode);
@@ -520,4 +1098,42 @@ void AOnePlayerController::BeginPlay()
             }
         }
     }
+}
+
+void AOnePlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    const bool bPauseMenuWasActive =
+        ActiveManagedMenu == PauseMenuWidgetInstance;
+    if (bPauseMenuWasActive || bPauseMenuStateBroadcastOpen)
+    {
+        ResetPauseMenuState();
+    }
+    if (bPauseMenuWasActive)
+    {
+        ActiveManagedMenu = nullptr;
+    }
+    RestorePauseMenuInputState();
+
+    if (PauseMenuWidgetInstance)
+    {
+        PauseMenuWidgetInstance->RemoveFromParent();
+        PauseMenuWidgetInstance = nullptr;
+    }
+
+    if (PlayerContext)
+    {
+        if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+        {
+            if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+                ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+                    LocalPlayer))
+            {
+                Subsystem->RemoveMappingContext(PlayerContext);
+            }
+        }
+    }
+
+    PauseMenuPage = EPauseMenuPage::Main;
+    PendingPauseMenuAction = EPauseMenuAction::None;
+    Super::EndPlay(EndPlayReason);
 }

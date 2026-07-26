@@ -103,6 +103,11 @@ protected:
 	TWeakObjectPtr<AEnemyCharacter> BoundEnemy;
 	TWeakObjectPtr<UOverlayWidgetController> BoundOverlayController;
 	TWeakObjectPtr<UPartyComponent> BoundPartyComponent;
+
+	// Preserves the Designer template class after Slots removes its children.
+	UPROPERTY(Transient)
+	TSubclassOf<UUserWidget> CachedPartySlotClass;
+
 	float CurrentHealth = 0.f;
 	float CurrentMaxHealth = 1.f;
 	FTimerHandle QuestCompletionTimer;

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "assetPath": "/Game/_Game/BluePrints/UI/PlayerMenu/WBP_CharacterSelect",
+  "widgets": [
+    {
+      "widgetPath": "RootCanvas/PageContent/HeaderArea/close",
+      "widgetName": "close",
+      "expectedClass": "Button",
+      "isVariable": true
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/RosterPanel/RosterScrollBox/RosterBox",
+      "widgetName": "RosterBox",
+      "expectedClass": "WrapBox",
+      "isVariable": true
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent/MainContent/PartyPanel/ActivePartyBox",
+      "widgetName": "ActivePartyBox",
+      "expectedClass": "VerticalBox",
+      "isVariable": true
+    },
+    {
+      "widgetPath": "RootCanvas/BottomActionBar/CancelSizeBox/CancelButton",
+      "widgetName": "CancelButton",
+      "expectedClass": "Button",
+      "isVariable": true
+    },
+    {
+      "widgetPath": "RootCanvas/BottomActionBar/ConfirmSizeBox/ConfirmButton",
+      "widgetName": "ConfirmButton",
+      "expectedClass": "Button",
+      "isVariable": true
+    }
+  ]
+}

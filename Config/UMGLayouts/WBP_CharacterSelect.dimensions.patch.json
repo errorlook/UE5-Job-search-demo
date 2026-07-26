@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "assetPath": "/Game/_Game/BluePrints/UI/PlayerMenu/WBP_CharacterSelect",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer",
+      "widgetName": "BackgroundLayer",
+      "expectedClass": "CanvasPanel",
+      "canvasSlot": {
+        "position": { "x": 0, "y": 0 },
+        "size": { "x": 1920, "y": 1080 },
+        "anchors": {
+          "minimum": { "x": 0, "y": 0 },
+          "maximum": { "x": 0, "y": 0 }
+        },
+        "alignment": { "x": 0, "y": 0 },
+        "autoSize": false,
+        "zOrder": 0
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/BackgroundImage",
+      "widgetName": "BackgroundImage",
+      "expectedClass": "Image",
+      "canvasSlot": {
+        "position": { "x": 0, "y": 0 },
+        "size": { "x": 1920, "y": 1080 },
+        "anchors": {
+          "minimum": { "x": 0, "y": 0 },
+          "maximum": { "x": 0, "y": 0 }
+        },
+        "alignment": { "x": 0, "y": 0 },
+        "autoSize": false,
+        "zOrder": 0
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/BaseTint",
+      "widgetName": "BaseTint",
+      "expectedClass": "Border",
+      "canvasSlot": {
+        "position": { "x": 0, "y": 0 },
+        "size": { "x": 1920, "y": 1080 },
+        "anchors": {
+          "minimum": { "x": 0, "y": 0 },
+          "maximum": { "x": 0, "y": 0 }
+        },
+        "alignment": { "x": 0, "y": 0 },
+        "autoSize": false,
+        "zOrder": 1
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/LeftShade",
+      "widgetName": "LeftShade",
+      "expectedClass": "Border",
+      "canvasSlot": {
+        "position": { "x": 0, "y": 0 },
+        "size": { "x": 620, "y": 1080 },
+        "anchors": {
+          "minimum": { "x": 0, "y": 0 },
+          "maximum": { "x": 0, "y": 0 }
+        },
+        "alignment": { "x": 0, "y": 0 },
+        "autoSize": false,
+        "zOrder": 2
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BackgroundLayer/GeometryDecoration",
+      "widgetName": "GeometryDecoration",
+      "expectedClass": "CanvasPanel",
+      "canvasSlot": {
+        "position": { "x": 0, "y": 0 },
+        "size": { "x": 1920, "y": 1080 },
+        "anchors": {
+          "minimum": { "x": 0, "y": 0 },
+          "maximum": { "x": 0, "y": 0 }
+        },
+        "alignment": { "x": 0, "y": 0 },
+        "autoSize": false,
+        "zOrder": 3
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PageContent",
+      "widgetName": "PageContent",
+      "expectedClass": "VerticalBox",
+      "canvasSlot": {
+        "position": { "x": 48, "y": 36 },
+        "size": { "x": 1824, "y": 932 },
+        "anchors": {
+          "minimum": { "x": 0, "y": 0 },
+          "maximum": { "x": 0, "y": 0 }
+        },
+        "alignment": { "x": 0, "y": 0 },
+        "autoSize": false,
+        "zOrder": 10
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BottomActionBar",
+      "widgetName": "BottomActionBar",
+      "expectedClass": "HorizontalBox",
+      "canvasSlot": {
+        "position": { "x": -48, "y": -40 },
+        "anchors": {
+          "minimum": { "x": 1, "y": 1 },
+          "maximum": { "x": 1, "y": 1 }
+        },
+        "alignment": { "x": 1, "y": 1 },
+        "autoSize": true,
+        "zOrder": 20
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BottomActionBar/CancelSizeBox",
+      "widgetName": "CancelSizeBox",
+      "expectedClass": "SizeBox",
+      "sizeBox": {
+        "widthOverride": 160,
+        "heightOverride": 56
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/BottomActionBar/ConfirmSizeBox",
+      "widgetName": "ConfirmSizeBox",
+      "expectedClass": "SizeBox",
+      "sizeBox": {
+        "widthOverride": 220,
+        "heightOverride": 56
+      }
+    }
+  ]
+}

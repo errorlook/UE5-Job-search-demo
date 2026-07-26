@@ -1,5 +1,6 @@
 #include "Components/PartyComponent.h"
 
+#include "Character/PlayerCharacter.h"
 #include "GameFramework/Actor.h"
 #include "Net/UnrealNetwork.h"
 
@@ -14,6 +15,7 @@ void UPartyComponent::BeginPlay()
 	Super::BeginPlay();
 	InitializeStartingParty();
 	NormalizePartySlots();
+	RestoreActiveSlotForHero(GetActiveHeroTag(), 0);
 }
 
 void UPartyComponent::InitializeStartingParty()
@@ -34,8 +36,9 @@ void UPartyComponent::InitializeStartingParty()
 		UnlockedHeroTags.Add(InitialHeroTag);
 		ActivePartyTags.SetNum(MaxPartySize);
 		ActivePartyTags[0] = InitialHeroTag;
+		ActiveSlotIndex = 0;
 		OnRosterChanged.Broadcast();
-		OnPartyChanged.Broadcast();
+		NotifyPartyChanged();
 	}
 }
 
@@ -92,8 +95,7 @@ bool UPartyComponent::AddHeroToPartyInternal(FGameplayTag HeroTag)
 	const int32 EmptySlotIndex = FindFirstEmptyPartySlot();
 	if (!ActivePartyTags.IsValidIndex(EmptySlotIndex)) return false;
 	ActivePartyTags[EmptySlotIndex] = HeroTag;
-	OnPartyChanged.Broadcast();
-	if (AActor* Owner = GetOwner()) Owner->ForceNetUpdate();
+	NotifyPartyChanged();
 	return true;
 }
 
@@ -115,11 +117,12 @@ bool UPartyComponent::RemoveHeroFromPartyInternal(FGameplayTag HeroTag)
 	if (!IsHeroInParty(HeroTag) || GetOccupiedPartyCount() <= 1) return false;
 
 	NormalizePartySlots();
+	const FGameplayTag PreviousActiveHero = GetActiveHeroTag();
 	const int32 SlotIndex = ActivePartyTags.IndexOfByKey(HeroTag);
 	if (!ActivePartyTags.IsValidIndex(SlotIndex)) return false;
 	ActivePartyTags[SlotIndex] = FGameplayTag();
-	OnPartyChanged.Broadcast();
-	if (AActor* Owner = GetOwner()) Owner->ForceNetUpdate();
+	RestoreActiveSlotForHero(PreviousActiveHero, 0);
+	NotifyPartyChanged();
 	return true;
 }
 
@@ -171,6 +174,76 @@ TArray<FPartySlotViewData> UPartyComponent::GetPartySlots() const
 	return Slots;
 }
 
+FGameplayTag UPartyComponent::GetActiveHeroTag() const
+{
+	return ActivePartyTags.IsValidIndex(ActiveSlotIndex)
+		? ActivePartyTags[ActiveSlotIndex]
+		: FGameplayTag();
+}
+
+EPartySetupApplyResult UPartyComponent::ValidatePartySetup(
+	const TArray<FGameplayTag>& NewParty, int32 NewActiveSlotIndex) const
+{
+	if (NewParty.Num() != MaxPartySize)
+	{
+		return EPartySetupApplyResult::InvalidParty;
+	}
+	if (!NewParty.IsValidIndex(NewActiveSlotIndex) ||
+		!NewParty[NewActiveSlotIndex].IsValid())
+	{
+		return EPartySetupApplyResult::InvalidActiveSlot;
+	}
+
+	TSet<FGameplayTag> UniqueHeroes;
+	for (const FGameplayTag HeroTag : NewParty)
+	{
+		if (!HeroTag.IsValid()) continue;
+		if (UniqueHeroes.Contains(HeroTag))
+		{
+			return EPartySetupApplyResult::InvalidParty;
+		}
+
+		FHeroSlotInfo HeroInfo;
+		if (!FindHeroInfo(HeroTag, HeroInfo))
+		{
+			return EPartySetupApplyResult::UnknownHero;
+		}
+		if (!IsHeroUnlocked(HeroTag))
+		{
+			return EPartySetupApplyResult::InvalidParty;
+		}
+		if (HeroInfo.CharacterClass.IsNull() ||
+			!HeroInfo.CharacterClass.LoadSynchronous())
+		{
+			return EPartySetupApplyResult::MissingCharacterClass;
+		}
+		UniqueHeroes.Add(HeroTag);
+	}
+
+	return EPartySetupApplyResult::Success;
+}
+
+bool UPartyComponent::ApplyPartySetup(
+	const TArray<FGameplayTag>& NewParty, int32 NewActiveSlotIndex)
+{
+	if (!GetOwner() || !GetOwner()->HasAuthority() ||
+		ValidatePartySetup(NewParty, NewActiveSlotIndex) !=
+			EPartySetupApplyResult::Success)
+	{
+		return false;
+	}
+
+	if (ActivePartyTags == NewParty && ActiveSlotIndex == NewActiveSlotIndex)
+	{
+		return true;
+	}
+
+	ActivePartyTags = NewParty;
+	ActiveSlotIndex = NewActiveSlotIndex;
+	NotifyPartyChanged();
+	return true;
+}
+
 bool UPartyComponent::SetPartySlot(int32 SlotIndex, FGameplayTag HeroTag)
 {
 	if (SlotIndex < 0 || SlotIndex >= MaxPartySize ||
@@ -197,6 +270,7 @@ bool UPartyComponent::SetPartySlotInternal(
 	}
 
 	NormalizePartySlots();
+	const FGameplayTag PreviousActiveHero = GetActiveHeroTag();
 	const int32 ExistingIndex = ActivePartyTags.IndexOfByKey(HeroTag);
 	if (ExistingIndex == SlotIndex) return false;
 
@@ -209,8 +283,8 @@ bool UPartyComponent::SetPartySlotInternal(
 		ActivePartyTags[SlotIndex] = HeroTag;
 	}
 
-	OnPartyChanged.Broadcast();
-	if (AActor* Owner = GetOwner()) Owner->ForceNetUpdate();
+	RestoreActiveSlotForHero(PreviousActiveHero, SlotIndex);
+	NotifyPartyChanged();
 	return true;
 }
 
@@ -233,6 +307,7 @@ bool UPartyComponent::ClearPartySlot(int32 SlotIndex)
 bool UPartyComponent::ClearPartySlotInternal(int32 SlotIndex)
 {
 	NormalizePartySlots();
+	const FGameplayTag PreviousActiveHero = GetActiveHeroTag();
 	if (!ActivePartyTags.IsValidIndex(SlotIndex) ||
 		!ActivePartyTags[SlotIndex].IsValid() ||
 		GetOccupiedPartyCount() <= 1)
@@ -240,8 +315,8 @@ bool UPartyComponent::ClearPartySlotInternal(int32 SlotIndex)
 		return false;
 	}
 	ActivePartyTags[SlotIndex] = FGameplayTag();
-	OnPartyChanged.Broadcast();
-	if (AActor* Owner = GetOwner()) Owner->ForceNetUpdate();
+	RestoreActiveSlotForHero(PreviousActiveHero, 0);
+	NotifyPartyChanged();
 	return true;
 }
 
@@ -266,6 +341,7 @@ bool UPartyComponent::SwapPartySlotsInternal(
 	int32 FirstSlotIndex, int32 SecondSlotIndex)
 {
 	NormalizePartySlots();
+	const FGameplayTag PreviousActiveHero = GetActiveHeroTag();
 	if (!ActivePartyTags.IsValidIndex(FirstSlotIndex) ||
 		!ActivePartyTags.IsValidIndex(SecondSlotIndex) ||
 		FirstSlotIndex == SecondSlotIndex)
@@ -273,8 +349,8 @@ bool UPartyComponent::SwapPartySlotsInternal(
 		return false;
 	}
 	ActivePartyTags.Swap(FirstSlotIndex, SecondSlotIndex);
-	OnPartyChanged.Broadcast();
-	if (AActor* Owner = GetOwner()) Owner->ForceNetUpdate();
+	RestoreActiveSlotForHero(PreviousActiveHero, FirstSlotIndex);
+	NotifyPartyChanged();
 	return true;
 }
 
@@ -289,6 +365,38 @@ void UPartyComponent::NormalizePartySlots()
 	{
 		ActivePartyTags.SetNum(MaxPartySize);
 	}
+}
+
+void UPartyComponent::RestoreActiveSlotForHero(
+	FGameplayTag PreviousActiveHero, int32 PreferredFallbackSlot)
+{
+	if (PreviousActiveHero.IsValid())
+	{
+		const int32 MovedActiveSlot =
+			ActivePartyTags.IndexOfByKey(PreviousActiveHero);
+		if (MovedActiveSlot != INDEX_NONE)
+		{
+			ActiveSlotIndex = MovedActiveSlot;
+			return;
+		}
+	}
+
+	if (ActivePartyTags.IsValidIndex(PreferredFallbackSlot) &&
+		ActivePartyTags[PreferredFallbackSlot].IsValid())
+	{
+		ActiveSlotIndex = PreferredFallbackSlot;
+		return;
+	}
+
+	ActiveSlotIndex = ActivePartyTags.IndexOfByPredicate(
+		[](const FGameplayTag HeroTag) { return HeroTag.IsValid(); });
+}
+
+void UPartyComponent::NotifyPartyChanged()
+{
+	++PartyStateRevision;
+	OnPartyChanged.Broadcast();
+	if (AActor* Owner = GetOwner()) Owner->ForceNetUpdate();
 }
 
 int32 UPartyComponent::GetOccupiedPartyCount() const
@@ -384,7 +492,7 @@ void UPartyComponent::OnRep_UnlockedHeroTags(
 	OnRosterChanged.Broadcast();
 }
 
-void UPartyComponent::OnRep_ActivePartyTags()
+void UPartyComponent::OnRep_PartyStateRevision()
 {
 	NormalizePartySlots();
 	OnPartyChanged.Broadcast();
@@ -396,5 +504,7 @@ void UPartyComponent::GetLifetimeReplicatedProps(
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION(UPartyComponent, UnlockedHeroTags, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(UPartyComponent, ActivePartyTags, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(UPartyComponent, ActiveSlotIndex, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(UPartyComponent, PartyStateRevision, COND_OwnerOnly);
 }
 

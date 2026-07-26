@@ -53,6 +53,9 @@ public class Lua : ModuleRules
         m_LibDirName = string.Format("lib-{0}", m_CompileAsCpp ? "cpp" : "c");
         m_LuaDirName = m_LuaVersion;
 
+        PublicDefinitions.Add(string.Format(
+            "UNLUA_LUA_RUNTIME_CONFIG=\"{0}\"", m_Config));
+
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, m_LuaDirName, "src"));
 
         var buildMethodName = "BuildFor" + Target.Platform;
@@ -479,7 +482,9 @@ public class Lua : ModuleRules
         if (!File.Exists(fullPath))
             return;
         var fileName = Path.GetFileName(fullPath);
-        var dstPath = Path.Combine("$(ProjectDir)", "Binaries", platform, fileName);
+        var dstPath = Path.Combine(
+            "$(PluginDir)", "Binaries", "ThirdParty", "Lua",
+            platform, m_Config, fileName);
         RuntimeDependencies.Add(dstPath, fullPath);
     }
 

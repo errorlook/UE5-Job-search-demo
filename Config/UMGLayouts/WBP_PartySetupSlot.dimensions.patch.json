@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assetPath": "/Game/_Game/BluePrints/UI/Overlay/WBP_PartySetupSlot",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "SlotRoot",
+      "widgetName": "SlotRoot",
+      "expectedClass": "SizeBox",
+      "sizeBox": {
+        "widthOverride": 230,
+        "heightOverride": 620
+      }
+    },
+    {
+      "widgetPath": "SlotRoot/SlotRoot_1",
+      "widgetName": "SlotRoot_1",
+      "expectedClass": "SizeBox",
+      "sizeBox": {
+        "widthOverride": 230,
+        "heightOverride": 620
+      }
+    }
+  ]
+}

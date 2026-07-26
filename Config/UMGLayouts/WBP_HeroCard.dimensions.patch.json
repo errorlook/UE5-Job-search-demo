@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "assetPath": "/Game/_Game/BluePrints/UI/Overlay/WBP_HeroCard",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "CardRoot",
+      "widgetName": "CardRoot",
+      "expectedClass": "SizeBox",
+      "sizeBox": {
+        "widthOverride": 150,
+        "heightOverride": 180
+      }
+    }
+  ]
+}

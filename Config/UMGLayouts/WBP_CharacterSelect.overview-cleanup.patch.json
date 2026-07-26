@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "assetPath": "/Game/_Game/BluePrints/UI/PlayerMenu/WBP_CharacterSelect",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/HeaderArea/TitleGroup/PageSubtitle",
+      "widgetName": "PageSubtitle",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "textBlock": {
+          "text": "调整当前编队成员"
+        }
+      },
+      "set": {
+        "textBlock": {
+          "text": "调整出战成员与队伍顺序"
+        }
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/MainContent/PartyPanel/PartySubtitle",
+      "widgetName": "PartySubtitle",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "visibility": "Visible",
+        "textBlock": {
+          "text": "点击角色或空槽以更换成员"
+        }
+      },
+      "set": {
+        "visibility": "Collapsed"
+      }
+    },
+    {
+      "widgetPath": "RootCanvas/PartyViewSwitcher/PartyOverviewView/PageContent/MainContent/PartyPanel/OperationHint",
+      "widgetName": "OperationHint",
+      "expectedClass": "TextBlock",
+      "expectedCurrent": {
+        "visibility": "Visible",
+        "textBlock": {
+          "text": "选择成员后返回总览；点击确定才会正式生效"
+        }
+      },
+      "set": {
+        "visibility": "Visible",
+        "textBlock": {
+          "text": "点击角色或空槽进行调整"
+        }
+      }
+    }
+  ]
+}

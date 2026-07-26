@@ -1,5 +1,6 @@
 #include "UI/Party/PartyHeroCardWidget.h"
 
+#include "Components/Border.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/OverlaySlot.h"
@@ -63,14 +64,101 @@ void UPartyHeroCardWidget::ApplyHeroData(
 			const_cast<UTexture2D*>(HeroInfo.AvatarIcon.Get()));
 	}
 	if (HeroNameText) HeroNameText->SetText(HeroInfo.HeroName);
+
+	int32 PartySlotIndex = INDEX_NONE;
+	if (PartyComponent)
+	{
+		for (const FPartySlotViewData& PartySlotData :
+			PartyComponent->GetPartySlots())
+		{
+			if (PartySlotData.bOccupied &&
+				PartySlotData.HeroInfo.HeroTag == HeroInfo.HeroTag)
+			{
+				PartySlotIndex = PartySlotData.SlotIndex;
+				break;
+			}
+		}
+	}
+	RefreshPartyState(PartySlotIndex);
+	SetCandidateSelected(false);
+}
+
+void UPartyHeroCardWidget::ApplyPreviewHeroData(
+	const FHeroSlotInfo& InHeroInfo, bool bInPendingParty)
+{
+	HeroInfo = InHeroInfo;
+	PartyComponent = nullptr;
+	if (HeroAvatarImage)
+	{
+		HeroAvatarImage->SetBrushFromTexture(
+			const_cast<UTexture2D*>(HeroInfo.AvatarIcon.Get()));
+	}
+	if (HeroNameText) HeroNameText->SetText(HeroInfo.HeroName);
 	if (PartyStateText)
 	{
-		const bool bInParty = PartyComponent &&
-			PartyComponent->IsHeroInParty(HeroInfo.HeroTag);
+		PartyStateText->SetText(bInPendingParty
+			? NSLOCTEXT("Party", "InParty", "\u5df2\u5165\u961f")
+			: FText::GetEmpty());
+		PartyStateText->SetVisibility(bInPendingParty
+			? ESlateVisibility::SelfHitTestInvisible
+			: ESlateVisibility::Collapsed);
+	}
+	if (PartyStateBadge)
+	{
+		PartyStateBadge->SetVisibility(bInPendingParty
+			? ESlateVisibility::SelfHitTestInvisible
+			: ESlateVisibility::Collapsed);
+	}
+	SetCandidateSelected(false);
+}
+
+void UPartyHeroCardWidget::ApplySelectionData(
+	const FHeroSlotInfo& InHeroInfo,
+	int32 InPendingPartySlotIndex,
+	bool bInCandidateSelected)
+{
+	HeroInfo = InHeroInfo;
+	PartyComponent = nullptr;
+	if (HeroAvatarImage)
+	{
+		HeroAvatarImage->SetBrushFromTexture(
+			const_cast<UTexture2D*>(HeroInfo.AvatarIcon.Get()));
+	}
+	if (HeroNameText) HeroNameText->SetText(HeroInfo.HeroName);
+	RefreshPartyState(InPendingPartySlotIndex);
+	SetCandidateSelected(bInCandidateSelected);
+}
+
+void UPartyHeroCardWidget::RefreshPartyState(int32 PendingPartySlotIndex)
+{
+	const bool bInParty = PendingPartySlotIndex != INDEX_NONE;
+	if (PartyStateText)
+	{
+		FNumberFormattingOptions NumberOptions;
+		NumberOptions.MinimumIntegralDigits = 2;
+		NumberOptions.MaximumIntegralDigits = 2;
 		PartyStateText->SetText(bInParty
-			? NSLOCTEXT("Party", "InParty", "In Party")
+			? FText::Format(
+				NSLOCTEXT("Party", "AssignedSlot", "\u5df2\u7f16\u5165 {0}"),
+				FText::AsNumber(PendingPartySlotIndex + 1, &NumberOptions))
 			: FText::GetEmpty());
 		PartyStateText->SetVisibility(bInParty
+			? ESlateVisibility::SelfHitTestInvisible
+			: ESlateVisibility::Collapsed);
+	}
+	if (PartyStateBadge)
+	{
+		PartyStateBadge->SetVisibility(bInParty
+			? ESlateVisibility::SelfHitTestInvisible
+			: ESlateVisibility::Collapsed);
+	}
+}
+
+void UPartyHeroCardWidget::SetCandidateSelected(bool bInCandidateSelected)
+{
+	if (HoverFrame)
+	{
+		HoverFrame->SetVisibility(bInCandidateSelected
 			? ESlateVisibility::SelfHitTestInvisible
 			: ESlateVisibility::Collapsed);
 	}

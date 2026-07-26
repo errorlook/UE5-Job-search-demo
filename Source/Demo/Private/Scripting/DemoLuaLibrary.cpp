@@ -101,3 +101,62 @@ void UDemoLuaLibrary::ToggleQuestList(
 		PlayerController->ToggleQuestList();
 	}
 }
+
+void UDemoLuaLibrary::TogglePauseMenu(
+	const UObject* WorldContextObject, int32 PlayerIndex)
+{
+	if (AOnePlayerController* PlayerController =
+		GetDemoPlayerController(WorldContextObject, PlayerIndex))
+	{
+		PlayerController->TogglePauseMenu();
+	}
+}
+
+void UDemoLuaLibrary::OpenPauseMenu(
+	const UObject* WorldContextObject, int32 PlayerIndex)
+{
+	if (AOnePlayerController* PlayerController =
+		GetDemoPlayerController(WorldContextObject, PlayerIndex))
+	{
+		PlayerController->OpenPauseMenu();
+	}
+}
+
+void UDemoLuaLibrary::ClosePauseMenu(
+	const UObject* WorldContextObject, int32 PlayerIndex)
+{
+	if (AOnePlayerController* PlayerController =
+		GetDemoPlayerController(WorldContextObject, PlayerIndex))
+	{
+		PlayerController->ClosePauseMenu();
+	}
+}
+
+bool UDemoLuaLibrary::IsPauseMenuOpen(
+	const UObject* WorldContextObject, int32 PlayerIndex)
+{
+	const AOnePlayerController* PlayerController =
+		GetDemoPlayerController(WorldContextObject, PlayerIndex);
+	return PlayerController && PlayerController->IsPauseMenuOpen();
+}
+
+void UDemoLuaLibrary::RequestPauseMenuAction(
+	const UObject* WorldContextObject, EPauseMenuAction Action,
+	int32 PlayerIndex)
+{
+	if (AOnePlayerController* PlayerController =
+		GetDemoPlayerController(WorldContextObject, PlayerIndex))
+	{
+		PlayerController->RequestPauseMenuAction(Action);
+	}
+}
+
+void UDemoLuaLibrary::ConfirmPauseMenuAction(
+	const UObject* WorldContextObject, bool bConfirmed, int32 PlayerIndex)
+{
+	if (AOnePlayerController* PlayerController =
+		GetDemoPlayerController(WorldContextObject, PlayerIndex))
+	{
+		PlayerController->ConfirmPauseMenuAction(bConfirmed);
+	}
+}

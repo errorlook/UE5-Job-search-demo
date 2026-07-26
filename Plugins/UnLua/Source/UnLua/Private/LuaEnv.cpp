@@ -87,7 +87,10 @@ namespace UnLua
 #if PLATFORM_WINDOWS
         // 防止类似AppleProResMedia插件忘了恢复Dll查找目录
         // https://github.com/Tencent/UnLua/issues/534
-        const auto Dir = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() / TEXT("Binaries/Win64"));
+        const auto Dir = FPaths::ConvertRelativePathToFull(
+            FPaths::ProjectPluginsDir()
+            / TEXT("UnLua/Binaries/ThirdParty/Lua/Win64")
+            / TEXT(UNLUA_LUA_RUNTIME_CONFIG));
         FPlatformProcess::PushDllDirectory(*Dir);
         L = lua_newstate(GetLuaAllocator(), nullptr);
         FPlatformProcess::PopDllDirectory(*Dir);

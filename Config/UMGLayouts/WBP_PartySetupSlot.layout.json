@@ -1,0 +1,691 @@
+{
+	"schemaVersion": 2,
+	"assetPath": "/Game/_Game/BluePrints/UI/Overlay/WBP_PartySetupSlot",
+	"designResolution":
+	{
+		"width": 1920,
+		"height": 1080
+	},
+	"widgets": [
+		{
+			"widgetPath": "SlotRoot",
+			"widgetName": "SlotRoot",
+			"expectedClass": "SizeBox",
+			"parentPath": "",
+			"slotClass": "None",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"sizeBox"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "Visible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"sizeBox":
+				{
+					"widthOverride": 230,
+					"heightOverride": 620,
+					"minDesiredWidth": 220,
+					"minDesiredHeight": 600,
+					"maxDesiredWidth": 250,
+					"maxDesiredHeight": 640
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1",
+			"widgetName": "SlotRoot_1",
+			"expectedClass": "SizeBox",
+			"parentPath": "SlotRoot",
+			"slotClass": "SizeBoxSlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"sizeBox"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"sizeBox":
+				{
+					"widthOverride": 230,
+					"heightOverride": 620,
+					"minDesiredWidth": null,
+					"minDesiredHeight": null,
+					"maxDesiredWidth": null,
+					"maxDesiredHeight": null
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay",
+			"widgetName": "Overlay",
+			"expectedClass": "Overlay",
+			"parentPath": "SlotRoot/SlotRoot_1",
+			"slotClass": "SizeBoxSlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": ""
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotBackground",
+			"widgetName": "SlotBackground",
+			"expectedClass": "Border",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0.035,
+						"g": 0.039,
+						"b": 0.035,
+						"a": 0.95
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 0,
+						"top": 0,
+						"right": 0,
+						"bottom": 0
+					},
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/CardSurface",
+			"widgetName": "CardSurface",
+			"expectedClass": "Border",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0.09,
+						"g": 0.09,
+						"b": 0.075,
+						"a": 0.32
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 0,
+						"top": 0,
+						"right": 0,
+						"bottom": 0
+					},
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotNumberText",
+			"widgetName": "SlotNumberText",
+			"expectedClass": "TextBlock",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"textBlock"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Visible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"textBlock":
+				{
+					"text": "Text Block",
+					"fontSize": 58,
+					"colorAndOpacity":
+					{
+						"r": 0.824,
+						"g": 0.765,
+						"b": 0.561,
+						"a": 0.18
+					},
+					"shadowColor":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"shadowOffset":
+					{
+						"x": 1,
+						"y": 1
+					},
+					"autoWrapText": false,
+					"justification": "Left",
+					"minDesiredWidth": 84
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/FullBodyImage",
+			"widgetName": "FullBodyImage",
+			"expectedClass": "Image",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"image"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"image":
+				{
+					"colorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					}
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/BottomInfoShade",
+			"widgetName": "BottomInfoShade",
+			"expectedClass": "Border",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": false,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0.02,
+						"g": 0.024,
+						"b": 0.02,
+						"a": 0.91
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 0,
+						"top": 0,
+						"right": 0,
+						"bottom": 0
+					},
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/HeroInfoPanel",
+			"widgetName": "HeroInfoPanel",
+			"expectedClass": "VerticalBox",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": ""
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/HeroInfoPanel/HeroNameText",
+			"widgetName": "HeroNameText",
+			"expectedClass": "RichTextBlock",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay/HeroInfoPanel",
+			"slotClass": "VerticalBoxSlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"boxSlot",
+				"richTextStyle"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"boxSlot":
+				{
+					"sizeRule": "Auto",
+					"fillCoefficient": 1,
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				},
+				"richTextStyle":
+				{
+					"overrideDefaultStyle": true,
+					"fontObjectPath": "/Engine/EngineFonts/Roboto.Roboto",
+					"typefaceFontName": "Regular"
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/HeroInfoPanel/HeroLevelText",
+			"widgetName": "HeroLevelText",
+			"expectedClass": "RichTextBlock",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay/HeroInfoPanel",
+			"slotClass": "VerticalBoxSlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"boxSlot",
+				"richTextStyle"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"boxSlot":
+				{
+					"sizeRule": "Auto",
+					"fillCoefficient": 1,
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				},
+				"richTextStyle":
+				{
+					"overrideDefaultStyle": true,
+					"fontObjectPath": "/Engine/EngineFonts/Roboto.Roboto",
+					"typefaceFontName": "Regular"
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/ElementIconImage",
+			"widgetName": "ElementIconImage",
+			"expectedClass": "Image",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"image"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"image":
+				{
+					"colorAndOpacity":
+					{
+						"r": 0.925,
+						"g": 0.906,
+						"b": 0.851,
+						"a": 0.9
+					}
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/EmptyPlusText",
+			"widgetName": "EmptyPlusText",
+			"expectedClass": "RichTextBlock",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"richTextStyle"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "SelfHitTestInvisible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"richTextStyle":
+				{
+					"overrideDefaultStyle": true,
+					"fontObjectPath": "/Engine/EngineFonts/Roboto.Roboto",
+					"typefaceFontName": "Regular"
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/ActiveBadge",
+			"widgetName": "ActiveBadge",
+			"expectedClass": "Border",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Collapsed",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0.925,
+						"g": 0.906,
+						"b": 0.851,
+						"a": 1
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 0.09,
+						"g": 0.094,
+						"b": 0.075,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 8,
+						"top": 4,
+						"right": 8,
+						"bottom": 4
+					},
+					"horizontalAlignment": "Center",
+					"verticalAlignment": "Center"
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/ActiveBadge/ActiveBadgeText",
+			"widgetName": "ActiveBadgeText",
+			"expectedClass": "TextBlock",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay/ActiveBadge",
+			"slotClass": "BorderSlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"textBlock"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Visible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"textBlock":
+				{
+					"text": "当前出战",
+					"fontSize": 12,
+					"colorAndOpacity":
+					{
+						"r": 0.09,
+						"g": 0.094,
+						"b": 0.075,
+						"a": 1
+					},
+					"shadowColor":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"shadowOffset":
+					{
+						"x": 1,
+						"y": 1
+					},
+					"autoWrapText": false,
+					"justification": "Center",
+					"minDesiredWidth": 58
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/SlotButton",
+			"widgetName": "SlotButton",
+			"expectedClass": "Button",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"button"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Visible",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"button":
+				{
+					"backgroundColor":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"colorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"isFocusable": false
+				}
+			}
+		},
+		{
+			"widgetPath": "SlotRoot/SlotRoot_1/Overlay/SelectedFrame",
+			"widgetName": "SelectedFrame",
+			"expectedClass": "Border",
+			"parentPath": "SlotRoot/SlotRoot_1/Overlay",
+			"slotClass": "OverlaySlot",
+			"supportedFields": [
+				"isVariable",
+				"visibility",
+				"isEnabled",
+				"renderOpacity",
+				"toolTipText",
+				"border"
+			],
+			"bindings": [],
+			"set":
+			{
+				"isVariable": true,
+				"visibility": "Collapsed",
+				"isEnabled": true,
+				"renderOpacity": 1,
+				"toolTipText": "",
+				"border":
+				{
+					"brushColor":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"contentColorAndOpacity":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"padding":
+					{
+						"left": 0,
+						"top": 0,
+						"right": 0,
+						"bottom": 0
+					},
+					"horizontalAlignment": "Fill",
+					"verticalAlignment": "Fill"
+				}
+			}
+		}
+	]
+}

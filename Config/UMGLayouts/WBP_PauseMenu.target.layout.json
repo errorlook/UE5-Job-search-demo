@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "assetPath": "/Game/_Game/BluePrints/UI/PlayerMenu/WBP_PauseMenu",
+  "designResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "widgets": [
+    {
+      "widgetPath": "CanvasPanel_Root/DimBackground",
+      "widgetName": "DimBackground",
+      "expectedClass": "Border",
+      "canvasSlot": {
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "size": {
+          "x": 1,
+          "y": 1
+        },
+        "anchors": {
+          "minimum": {
+            "x": 0,
+            "y": 0
+          },
+          "maximum": {
+            "x": 1,
+            "y": 1
+          }
+        },
+        "alignment": {
+          "x": 0,
+          "y": 0
+        },
+        "autoSize": false,
+        "zOrder": 0
+      }
+    },
+    {
+      "widgetPath": "CanvasPanel_Root/Border_LeftPanel",
+      "widgetName": "Border_LeftPanel",
+      "expectedClass": "Border",
+      "canvasSlot": {
+        "position": {
+          "x": 48,
+          "y": 64
+        },
+        "size": {
+          "x": 48,
+          "y": 64
+        },
+        "anchors": {
+          "minimum": {
+            "x": 0,
+            "y": 0
+          },
+          "maximum": {
+            "x": 0.42,
+            "y": 1
+          }
+        },
+        "alignment": {
+          "x": 0,
+          "y": 0
+        },
+        "autoSize": false,
+        "zOrder": 1
+      }
+    }
+  ]
+}

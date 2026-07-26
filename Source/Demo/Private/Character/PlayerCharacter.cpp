@@ -433,16 +433,12 @@ void APlayerCharacter::AbilityInputTagHeld(FGameplayTag InputTag)
 // ========================================================
 void APlayerCharacter::ToggleOpenPanelAction()
 {
-    APlayerController* PC = Cast<APlayerController>(GetController());
+    AOnePlayerController* PC = Cast<AOnePlayerController>(GetController());
     if (!PC) return;
 
     if (CharacterPanelInstance && CharacterPanelInstance->IsInViewport())
     {
-       CharacterPanelInstance->RemoveFromParent();
-       FInputModeGameOnly InputMode;
-       PC->SetInputMode(InputMode);
-       PC->bShowMouseCursor = false;
-       PC->SetPause(false); 
+       PC->CloseManagedMenu(CharacterPanelInstance);
     }
     else
     {
@@ -452,13 +448,7 @@ void APlayerCharacter::ToggleOpenPanelAction()
        }
        if (CharacterPanelInstance)
        {
-          CharacterPanelInstance->AddToViewport();
-          FInputModeGameAndUI InputMode;
-          InputMode.SetWidgetToFocus(CharacterPanelInstance->TakeWidget()); 
-          InputMode.SetHideCursorDuringCapture(false);
-          PC->SetInputMode(InputMode);
-          PC->bShowMouseCursor = true;
-          PC->SetPause(true); 
+          PC->OpenManagedMenu(CharacterPanelInstance);
        }
     }
 }
@@ -468,16 +458,12 @@ void APlayerCharacter::ToggleOpenPanelAction()
 // ========================================================
 void APlayerCharacter::ToggleInventoryPanelAction()
 {
-    APlayerController* PC = Cast<APlayerController>(GetController());
+    AOnePlayerController* PC = Cast<AOnePlayerController>(GetController());
     if (!PC) return;
 
     if (InventoryPanelInstance && InventoryPanelInstance->IsInViewport())
     {
-        InventoryPanelInstance->RemoveFromParent();
-        FInputModeGameOnly InputMode;
-        PC->SetInputMode(InputMode);
-        PC->bShowMouseCursor = false;
-        PC->SetPause(false); 
+        PC->CloseManagedMenu(InventoryPanelInstance);
     }
     else
     {
@@ -495,13 +481,7 @@ void APlayerCharacter::ToggleInventoryPanelAction()
                 InventoryPanelInstance->InitializePanel(InventoryComp);
             }
 
-            InventoryPanelInstance->AddToViewport();
-            FInputModeGameAndUI InputMode;
-            InputMode.SetWidgetToFocus(InventoryPanelInstance->TakeWidget()); 
-            InputMode.SetHideCursorDuringCapture(false);
-            PC->SetInputMode(InputMode);
-            PC->bShowMouseCursor = true;
-            PC->SetPause(true); 
+            PC->OpenManagedMenu(InventoryPanelInstance);
         }
     }
 }

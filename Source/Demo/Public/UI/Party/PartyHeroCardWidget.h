@@ -6,6 +6,7 @@
 #include "PartyHeroCardWidget.generated.h"
 
 class UButton;
+class UBorder;
 class UImage;
 class URichTextBlock;
 class UPartyComponent;
@@ -23,6 +24,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Party|Setup")
 	void ApplyHeroData(
 		const FHeroSlotInfo& InHeroInfo, UPartyComponent* InPartyComponent);
+
+	void ApplyPreviewHeroData(
+		const FHeroSlotInfo& InHeroInfo, bool bInPendingParty);
+
+	void ApplySelectionData(
+		const FHeroSlotInfo& InHeroInfo,
+		int32 InPendingPartySlotIndex,
+		bool bInCandidateSelected);
 
 	UPROPERTY(BlueprintAssignable, Category = "Party|Setup")
 	FPartyHeroSelectedSignature OnHeroSelected;
@@ -47,9 +56,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<URichTextBlock> PartyStateText;
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UBorder> PartyStateBadge;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
+	TObjectPtr<UBorder> HoverFrame;
+
 private:
 	UFUNCTION()
 	void HandleHeroClicked();
+
+	void RefreshPartyState(int32 PendingPartySlotIndex);
+	void SetCandidateSelected(bool bInCandidateSelected);
 
 	UPROPERTY(Transient)
 	TObjectPtr<UPartyComponent> PartyComponent;

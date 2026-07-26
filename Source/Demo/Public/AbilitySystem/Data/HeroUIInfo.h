@@ -8,6 +8,7 @@
 #include "HeroUIInfo.generated.h"
 
 class APlayerCharacter;
+class UAnimMontage;
 
 /**
  * UI data for one party member.
@@ -46,6 +47,10 @@ struct FHeroSlotInfo
 	// Playable pawn used when this party member becomes active.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftClassPtr<APlayerCharacter> CharacterClass;
+
+	// Optional preview-only idle. It must match the playable mesh skeleton.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UAnimMontage> PreviewIdleMontage;
 };
 
 /**
