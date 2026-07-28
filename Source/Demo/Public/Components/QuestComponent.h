@@ -29,6 +29,10 @@ struct FQuestRuntimeEntry
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
 	bool bRewardClaimed = false;
+
+	// Definition-list rows may exist without being accepted by this player.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quest")
+	bool bAccepted = false;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
@@ -54,6 +58,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Quest")
 	bool AcceptQuest(UQuestDataAsset* Quest);
 
+	// Only succeeds when Lua allows acceptance and a native quest asset exists.
+	UFUNCTION(BlueprintCallable, Category = "Quest")
+	bool AcceptQuestById(FName QuestId);
+
 	UFUNCTION(BlueprintCallable, Category = "Quest|Progress")
 	bool NotifyObjectiveProgress(
 		FName ObjectiveTargetId, int32 ProgressAmount = 1);
@@ -75,7 +83,7 @@ public:
 	bool GetQuestEntry(FName QuestId, FQuestRuntimeEntry& OutEntry) const;
 
 	UFUNCTION(BlueprintPure, Category = "Quest")
-	TArray<FQuestRuntimeEntry> GetQuestEntries() const { return QuestEntries; }
+	TArray<FQuestRuntimeEntry> GetQuestEntries() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Quest|Tracking")
 	bool SetTrackedQuest(FName QuestId);
@@ -107,6 +115,10 @@ public:
 	virtual void GetLifetimeReplicatedProps(
 		TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+protected:
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 private:
 	bool AcceptQuestInternal(UQuestDataAsset* Quest);
 	bool NotifyObjectiveProgressInternal(
@@ -116,6 +128,11 @@ private:
 	bool GrantReward(FQuestRuntimeEntry& QuestEntry);
 	void SelectNextTrackedQuest();
 	int32 FindQuestIndex(FName QuestId) const;
+	UQuestDataAsset* ResolveQuestForPresentation(UQuestDataAsset* Quest) const;
+	int32 ResolveRequiredCount(const UQuestDataAsset* Quest) const;
+
+	UFUNCTION()
+	void HandleQuestDefinitionsChanged(int32 NewRevision);
 
 	UFUNCTION(Server, Reliable)
 	void ServerAcceptQuest(UQuestDataAsset* Quest);

@@ -3,6 +3,21 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 
+namespace
+{
+    struct FExistingStackUpdate
+    {
+        int32 SlotIndex = INDEX_NONE;
+        int32 QuantityToAdd = 0;
+    };
+
+    struct FNewStackCreate
+    {
+        int32 SlotIndex = INDEX_NONE;
+        int32 Quantity = 0;
+    };
+}
+
 UInventoryComponent::UInventoryComponent()
 {
     // Inventory is event-driven and does not require ticking.
@@ -34,54 +49,138 @@ bool UInventoryComponent::GetItemStaticData(FName ItemID, FItemStaticData& OutIt
 
 bool UInventoryComponent::AddItem(FName ItemID, int32 Amount)
 {
-    if (Amount <= 0 || ItemID == NAME_None) return false;
-
-    FItemStaticData ItemData;
-    if (!GetItemStaticData(ItemID, ItemData))
+    if (Amount <= 0 || ItemID == NAME_None)
     {
-        UE_LOG(LogTemp, Warning, TEXT("尝试添加不存在的物品ID: %s，请检查数据表！"), *ItemID.ToString());
         return false;
     }
 
-    int32 FirstEmptyIndex = -1;
-
-    // Search existing slots before allocating a new stack.
-    for (int32 i = 0; i < InventorySlots.Num(); ++i)
+    FItemStaticData ItemData;
+    if (!GetItemStaticData(ItemID, ItemData) || ItemData.MaxStackSize <= 0)
     {
-        // Fill compatible stacks up to their configured limit.
-        if (InventorySlots[i].ItemID == ItemID && InventorySlots[i].Quantity < ItemData.MaxStackSize)
+        return false;
+    }
+
+    TArray<int32> ExistingStackIndices;
+    TArray<int32> EmptySlotIndices;
+    int64 AvailableCapacity = 0;
+
+    // Phase one: inspect capacity without changing inventory state.
+    for (int32 SlotIndex = 0; SlotIndex < InventorySlots.Num(); ++SlotIndex)
+    {
+        const FInventorySlot& Slot = InventorySlots[SlotIndex];
+        if (Slot.IsEmpty())
         {
-            int32 SpaceLeft = ItemData.MaxStackSize - InventorySlots[i].Quantity;
-            if (SpaceLeft >= Amount)
-            {
-                InventorySlots[i].Quantity += Amount;
-                OnInventoryUpdated.Broadcast(); // Notify UI listeners.
-                return true; 
-            }
-            else
-            {
-                // Continue searching when this stack cannot hold the remainder.
-                InventorySlots[i].Quantity += SpaceLeft;
-                Amount -= SpaceLeft;
-            }
+            EmptySlotIndices.Add(SlotIndex);
+            AvailableCapacity += ItemData.MaxStackSize;
+            continue;
         }
-        // Remember the first empty slot for any remaining items.
-        else if (InventorySlots[i].IsEmpty() && FirstEmptyIndex == -1)
+
+        if (Slot.ItemID == ItemID)
         {
-            FirstEmptyIndex = i;
+            if (Slot.Quantity > ItemData.MaxStackSize)
+            {
+                return false;
+            }
+
+            if (Slot.Quantity < ItemData.MaxStackSize)
+            {
+                ExistingStackIndices.Add(SlotIndex);
+                AvailableCapacity += ItemData.MaxStackSize - Slot.Quantity;
+            }
         }
     }
 
-    // Place the remaining quantity in the first empty slot.
-    if (Amount > 0 && FirstEmptyIndex != -1)
+    if (AvailableCapacity < static_cast<int64>(Amount))
     {
-        InventorySlots[FirstEmptyIndex].ItemID = ItemID;
-        InventorySlots[FirstEmptyIndex].Quantity = Amount;
-        OnInventoryUpdated.Broadcast(); // Notify UI listeners.
-        return true;
+        return false;
     }
 
-    return false; // Inventory is full.
+    TArray<FExistingStackUpdate> ExistingStackUpdates;
+    TArray<FNewStackCreate> NewStackCreates;
+    int32 RemainingAmount = Amount;
+
+    for (const int32 SlotIndex : ExistingStackIndices)
+    {
+        if (RemainingAmount == 0)
+        {
+            break;
+        }
+
+        const FInventorySlot& Slot = InventorySlots[SlotIndex];
+        const int32 QuantityToAdd = FMath::Min(
+            RemainingAmount,
+            ItemData.MaxStackSize - Slot.Quantity);
+        ExistingStackUpdates.Add({SlotIndex, QuantityToAdd});
+        RemainingAmount -= QuantityToAdd;
+    }
+
+    for (const int32 SlotIndex : EmptySlotIndices)
+    {
+        if (RemainingAmount == 0)
+        {
+            break;
+        }
+
+        const int32 StackQuantity = FMath::Min(
+            RemainingAmount,
+            ItemData.MaxStackSize);
+        NewStackCreates.Add({SlotIndex, StackQuantity});
+        RemainingAmount -= StackQuantity;
+    }
+
+    int64 PlannedAmount = 0;
+    bool bPlanIsValid = RemainingAmount == 0;
+
+    for (const FExistingStackUpdate& Update : ExistingStackUpdates)
+    {
+        bPlanIsValid = bPlanIsValid
+            && InventorySlots.IsValidIndex(Update.SlotIndex)
+            && Update.QuantityToAdd > 0;
+        if (!bPlanIsValid)
+        {
+            break;
+        }
+
+        const FInventorySlot& Slot = InventorySlots[Update.SlotIndex];
+        bPlanIsValid = Slot.ItemID == ItemID
+            && !Slot.IsEmpty()
+            && Slot.Quantity + Update.QuantityToAdd <= ItemData.MaxStackSize;
+        PlannedAmount += Update.QuantityToAdd;
+    }
+
+    for (const FNewStackCreate& Create : NewStackCreates)
+    {
+        bPlanIsValid = bPlanIsValid
+            && InventorySlots.IsValidIndex(Create.SlotIndex)
+            && InventorySlots[Create.SlotIndex].IsEmpty()
+            && Create.Quantity > 0
+            && Create.Quantity <= ItemData.MaxStackSize;
+        PlannedAmount += Create.Quantity;
+    }
+
+    if (!bPlanIsValid || PlannedAmount != static_cast<int64>(Amount))
+    {
+        return false;
+    }
+
+    // Phase two: the complete plan is known to fit, so commit it atomically.
+    for (const FExistingStackUpdate& Update : ExistingStackUpdates)
+    {
+        InventorySlots[Update.SlotIndex].Quantity += Update.QuantityToAdd;
+    }
+
+    for (const FNewStackCreate& Create : NewStackCreates)
+    {
+        FInventorySlot& Slot = InventorySlots[Create.SlotIndex];
+        Slot.ItemID = ItemID;
+        Slot.Quantity = Create.Quantity;
+    }
+
+    OnInventoryUpdated.Broadcast();
+#if WITH_DEV_AUTOMATION_TESTS
+    OnInventoryUpdatedTestProxy.Broadcast();
+#endif
+    return true;
 }
 
 bool UInventoryComponent::UseItemAtIndex(int32 SlotIndex)

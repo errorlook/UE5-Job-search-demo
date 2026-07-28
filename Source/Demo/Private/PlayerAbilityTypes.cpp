@@ -5,7 +5,7 @@
 bool FPlayerGamePlayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)
 {
 	uint32 RepBits = 0;
-	if (Ar.IsLoading())
+	if (Ar.IsSaving())
 	{
 		if (bReplicateInstigator && Instigator.IsValid())
 		{
@@ -45,7 +45,27 @@ bool FPlayerGamePlayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap*
 		}
 	}
 	
+	bOutSuccess = true;
 	Ar.SerializeBits(&RepBits, 9);
+	bOutSuccess &= !Ar.IsError();
+
+	if (Ar.IsLoading())
+	{
+		Instigator.Reset();
+		EffectCauser.Reset();
+		AbilityCDO.Reset();
+		AbilityInstanceNotReplicated.Reset();
+		AbilityLevel = 1;
+		SourceObject.Reset();
+		InstigatorAbilitySystemComponent.Reset();
+		Actors.Reset();
+		HitResult.Reset();
+		WorldOrigin = FVector::ZeroVector;
+		bHasWorldOrigin = false;
+		bReplicateSourceObject = false;
+		bIsBlockedHit = false;
+		bIsCriticalHit = false;
+	}
 	
 	if (RepBits & (1 << 0))
 	{
@@ -62,10 +82,14 @@ bool FPlayerGamePlayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap*
 	if (RepBits & (1 << 3))
 	{
 		Ar << SourceObject;
+		if (Ar.IsLoading())
+		{
+			bReplicateSourceObject = true;
+		}
 	}
 	if (RepBits & (1 << 4))
 	{
-		SafeNetSerializeTArray_Default<31>(Ar, Actors);
+		bOutSuccess &= SafeNetSerializeTArray_Default<31>(Ar, Actors);
 	}
 	if (RepBits & (1 << 5))
 	{
@@ -76,7 +100,9 @@ bool FPlayerGamePlayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap*
 				HitResult = TSharedPtr<FHitResult>(new FHitResult());
 			}
 		}
-		HitResult->NetSerialize(Ar, Map, bOutSuccess);
+		bool bHitResultSuccess = true;
+		HitResult->NetSerialize(Ar, Map, bHitResultSuccess);
+		bOutSuccess &= bHitResultSuccess;
 	}
 	if (RepBits & (1 << 6))
 	{
@@ -99,5 +125,6 @@ bool FPlayerGamePlayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap*
 	{
 		AddInstigator(Instigator.Get(),EffectCauser.Get());
 	}
+	bOutSuccess &= !Ar.IsError();
 	return true;
 }

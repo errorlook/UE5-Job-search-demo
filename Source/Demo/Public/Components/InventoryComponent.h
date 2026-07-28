@@ -28,7 +28,7 @@ struct FItemStaticData : public FTableRowBase
     UStaticMesh* ItemMesh = nullptr;
     
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
-    EItemType ItemType;
+    EItemType ItemType = EItemType::Material;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory|Data")
     int32 MaxStackSize = 99; // Maximum items per stack.
@@ -58,6 +58,11 @@ struct FInventorySlot
 
 // Notifies UMG whenever inventory contents change.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
+
+#if WITH_DEV_AUTOMATION_TESTS
+// Mirrors AddItem's Blueprint notification so automation can count broadcasts.
+DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdatedTestProxy);
+#endif
 
 
 // =========================================================================
@@ -89,6 +94,10 @@ public:
     // Change notifications.
     UPROPERTY(BlueprintAssignable, Category = "Inventory|Events")
     FOnInventoryUpdated OnInventoryUpdated;
+
+#if WITH_DEV_AUTOMATION_TESTS
+    FOnInventoryUpdatedTestProxy OnInventoryUpdatedTestProxy;
+#endif
 
     // Blueprint API.
     

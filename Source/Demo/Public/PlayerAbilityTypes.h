@@ -17,12 +17,12 @@ public:
 	void SetIsCriticalHit(bool bInIsCriticalHit) {bIsCriticalHit = bInIsCriticalHit;}
 	void SetIsBlockedHit(bool bInIsBlockedHit) {bIsBlockedHit = bInIsBlockedHit;}
 	
-	virtual UScriptStruct*GetStruct() const
+	virtual UScriptStruct* GetScriptStruct() const override
 	{
 		return StaticStruct();
 	}
 	
-	virtual FPlayerGamePlayEffectContext * Duplicate() const
+	virtual FPlayerGamePlayEffectContext* Duplicate() const override
 	{
 		FPlayerGamePlayEffectContext * NewContext = new FPlayerGamePlayEffectContext();
 		*NewContext = *this;
@@ -32,7 +32,7 @@ public:
 		}
 		return NewContext;
 	}
-	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) ;
+	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 	
 protected:
 	
