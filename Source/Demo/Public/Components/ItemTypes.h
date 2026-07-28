@@ -31,7 +31,7 @@ struct FItemDataRow : public FTableRowBase
 	FText ItemName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EItemType ItemType;
+	EItemType ItemType = EItemType::Material;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> ItemIcon;

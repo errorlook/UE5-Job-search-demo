@@ -28,7 +28,7 @@ struct FItemStaticData : public FTableRowBase
     UStaticMesh* ItemMesh = nullptr;
     
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Data")
-    EItemType ItemType;
+    EItemType ItemType = EItemType::Material;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory|Data")
     int32 MaxStackSize = 99; // Maximum items per stack.
